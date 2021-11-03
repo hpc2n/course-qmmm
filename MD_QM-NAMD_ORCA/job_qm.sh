@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH -A SNICyyyy-xx-yy
-#SBATCH -J namd
+#SBATCH -A Project_ID
+#SBATCH -J qmmm
 #SBATCH -t 00:30:00
 #SBATCH -N 1
 #SBATCH -n 14
