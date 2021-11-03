@@ -1,2 +1,6 @@
 MD_QM-NAMD_GAUSSIAN/Solution/
 MD_QM-NAMD_GAUSSIAN/Solution2/
+MD_QM-NAMD_ORCA/mdsim/
+MD_QM-NAMD_ORCA/mdsim_temp/
+MD_QM-NAMD_ORCA/qmsim/
+MD_QM-NAMD_ORCA/qmsim_old/
