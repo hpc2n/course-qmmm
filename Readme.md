@@ -12,7 +12,7 @@ NOTE: The course will be online!
 
 ## Topics to be covered are:
 
-- Setting up classical MD and QM/MM simulations with NAMD+VMD and GAUSSIAN
+- Setting up classical MD and QM/MM simulations with NAMD+VMD and GAUSSIAN/ORCA
 
 ## Instructor: 
 
