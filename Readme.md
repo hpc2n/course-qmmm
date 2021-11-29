@@ -25,7 +25,7 @@ Birgitte Brydsö
 ## Initial instructions:
 
 ```
-cd /pfs/proj/nobackup/fs/projnb10/
+cd /proj/nobackup/qmmm2021
 git clone https://github.com/hpc2n/course-qmmm.git 
 cd course-qmmm/ 
 ```

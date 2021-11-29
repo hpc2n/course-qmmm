@@ -7,6 +7,7 @@
 #SBATCH --output=job_o.out
 #SBATCH --error=job_o.err
 
+ml purge  > /dev/null 2>&1 
 ml gaussian/16.C.01-AVX2
 ml GCC/9.3.0  OpenMPI/4.0.3
 ml SciPy-bundle/2020.03-Python-2.7.18

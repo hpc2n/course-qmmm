@@ -46,7 +46,7 @@ Molecule File Browser box dialog.
 - Solvation. Start VMD. On VMD Tk Console type:
   - > package require solvate
   - > solvate 4ake_corr.psf 4ake_corr.pdb -t 10 -o 4ake_wb 
-  - Close VMD and check if the solvated protein molecule files (4ake_wb.psf, 4ake_corr.psf) were written.
+  - Close VMD and check if the solvated protein molecule files (4ake_wb.psf, 4ake_wb.psf) were written.
   *-t 10* creates a water box whose sides are 10 Angstrom from the more distant protein atom.
 
 - Ionization. On VMD, open the Tk console, use the following command to place Na and Cl ions at a 150mM 
@@ -79,19 +79,17 @@ Note: Although the basis vectors from the *4ake_ion.pdb*  work in the present ex
 set of values is 57.13 (vector1), 74.56 (vector2), and 70.97 (vector3).
 cellOrigin  at       -1.8683815002441406 -4.4046807289123535 -10.453012466430664
 
-- Use the NAMD configuration file *4ake_eq.conf* and modify the values for the Periodic Boundary Conditions part.
-Add the values of the Center of Mass position that you recorded previously in the corresponding *FIXME* strings.
+- In the batch script *namd.sh* replace **Project_ID** with the project for the present course. Also,
+add the line *#SBATCH --reservation=*. Submit the job to the queue with the command *sbatch namd.sh*
 
-- submit the job to the queue with the command *sbatch namd.sh*
-
-- Analysis of the results. On a Kebnekaise terminal type: *vmd 4ake_ion.pdb 4ake_ion_eq.dcd*. Then, go to 
+- Analysis of the results. On a Kebnekaise terminal type: *vmd 4ake_ion.psf 4ake_ion_eq.dcd*. Then, go to 
 Extensions -> Analysis -> RMSD Trajectory Tool. Check the options *Backbone*, *Plot*, and click on
 *ALIGN* and finally *RMSD*. This will plot the RMSD of the aligned protein w.r.t. the backbone atoms.
 
 
 # Setting up a QM/MM simulation with NAMD and VMD 
 
-- Because it is not possible to get a better equilibrated structure in a short time I did it before for you.
+- Because it is not possible to get a better equilibrated structure in a short time, I prepared it already for you.
 This is the structure that we will be working out. The pfs file is *4ake_ion_eq.psf* and the pdb file *4ake_ion_eq.pdb*.
 The basis vectors that you may use for this structure are 56.85, 74.16, and 70.59 (use these data for
 the *FIXME*s. The cell origin is *(-1.84, -4.39,  -10.4)*
@@ -119,9 +117,10 @@ be considered as QM atoms and also the boundary atoms. The file that we will use
 software for solving the QM part. The options for the Gaussian input script are between lines 18-25.
 Paths for the Gaussian executable are provided in lines 147 and 150. You don't need to change anything
 in this file.
-    - Correct the line for *qmExecPath* with the path of the *run_gaussian.py* script (where you have
-    been working). The line would look like: qmExecPath "/A/B/run_gaussian.py" 
-    - Correct also the line for *qmBaseDir* with the path of the directory you are working.
+
+- In the file *4ake_eq_qmmm.conf*, correct the line for *qmExecPath* with the path of the *run_gaussian.py* 
+    script (where you have been working). The line would look like: qmExecPath "/A/B/run_gaussian.py" 
+    Correct also the line for *qmBaseDir* with the path of the directory you are working.
     The line would look like: qmBaseDir "/A/B" 
 
 - The batch script for the present QM/MM simulation will be *namd_qmmm.sh*. Take a look at this script
