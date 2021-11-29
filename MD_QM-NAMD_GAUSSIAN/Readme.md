@@ -11,7 +11,8 @@
 ml GCC/9.3.0  OpenMPI/4.0.3 ; ml VMD/1.9.4a43-Python-2.7.18
 
 - Start VMD on the terminal by "vmd" (assuming your path is the one where you put the 4ake.pdb file).
-Open VMD:  File -> New Molecule (choose 4ake.pdb) and close the Molecule File Browser box dialog.
+Open VMD:  File -> New Molecule -> Browse, choose 4ake.pdb -> OK -> Load and close the 
+Molecule File Browser box dialog.
 
 - On VMD Main, go to Extensions -> Tk Console write these commands:
   - (cd $PATH_TO_PDB_FILE if you are working in your local machine)
@@ -21,8 +22,9 @@ Open VMD:  File -> New Molecule (choose 4ake.pdb) and close the Molecule File Br
   - with your preferred text editor delete the atom 1656 OXT
 
 - Download the CHARMM36 parameters file toppar_c36_jul20.tgz from MacKerell's lab (http://mackerell.umaryland.edu/charmm_ff.shtml)
-  - extract the files with the command *tar zxvf toppar_c36_jul20.tgz* 
-  - copy and paste the file *top_all36_prot.rtf*,  *toppar_water_ions.str* and *par_all36_prot.prm* to the same folder level (same $PATH) than the 4ake_chaina.pdb structure
+  - extract the files with the command *tar zxvf toppar_c36_jul20.tgz* (I already did this step)
+  - copy and paste the file *top_all36_prot.rtf*,  *toppar_water_ions.str* and *par_all36_prot.prm* to the same folder level 
+  (same $PATH) than the 4ake_chaina.pdb structure (these files should be already in this folder)
 
 - write these lines into a file called *4ake.pgn*:
 
