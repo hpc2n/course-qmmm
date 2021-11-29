@@ -21,3 +21,11 @@ Pedro Ojeda
 ## Helper:
 
 Birgitte Brydsö
+
+## Initial instructions:
+
+```
+cd /pfs/proj/nobackup/fs/projnb10/
+git clone https://github.com/hpc2n/course-qmmm.git 
+cd course-qmmm/ 
+```
