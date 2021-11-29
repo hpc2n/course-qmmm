@@ -3,7 +3,8 @@
 - Download the PDB structure from Protein Data Bank (https://www.rcsb.org/). 
   In the field "Enter search term" write  4AKE. Then, use the option "Download Files"
   and choose "PDB Format". The PDB file will be downloaded to your local machine.
-  Then, you can transfer this file to Kebnekaise.
+  Then, you can transfer this file to Kebnekaise (I already did this step, the structure
+  is in this directory).
 
 - Load the VMD modules on Kebnekaise:
 
