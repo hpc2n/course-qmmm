@@ -8,7 +8,9 @@
 
 - Load the VMD modules on Kebnekaise:
 
-ml GCC/9.3.0  OpenMPI/4.0.3 ; ml VMD/1.9.4a43-Python-2.7.18
+ml purge  > /dev/null 2>&1
+ml GCC/9.3.0  OpenMPI/4.0.3 
+ml VMD/1.9.4a43-Python-2.7.18
 
 - Start VMD on the terminal by "vmd" (assuming your path is the one where you put the 4ake.pdb file).
 Open VMD:  File -> New Molecule -> Browse, choose 4ake.pdb -> OK -> Load and close the 

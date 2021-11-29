@@ -1,4 +1,6 @@
-ml GCC/9.3.0  OpenMPI/4.0.3; ml VMD/1.9.4a43-Python-3.8.2
+ml purge  > /dev/null 2>&1
+ml GCC/9.3.0  OpenMPI/4.0.3
+ml VMD/1.9.4a43-Python-3.8.2
 
 * Assuming you are in the folder MD_QM-NAMD_ORCA, open VMD on the
 GUI and go to Extensions -> Simulation -> QwikMD
