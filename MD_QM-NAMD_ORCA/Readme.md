@@ -54,8 +54,8 @@ changes). Then, click on *Prepare* to save all required files.
 
 * Close VMD
 
-* Copy the script *job_md.sh* to the folder *mdsim/run*, move to this directory
-and submit your script *sbatch job_md.sh*. When the simulation finishes, you can
+* Copy the script *namd.sh* to the folder *mdsim/run*, move to this directory
+and submit your script *sbatch namd.sh*. When the simulation finishes, you can
 take a look at the equilibration trajectory *vmd mdsim_QwikMD.psf Equilibration.dcd*.
 
 -------------------------------------------------------------------------------
@@ -97,5 +97,5 @@ qmConfigLine "%PAL NPROCS 10 END"
 
 to run on 10 cores in parallel mode.
 
-* Copy the batch job for qm simulations to this current folder (*cp ../../job_qm.sh*)
-and submit the jobs with *sbatch job_qm.sh*
+* Copy the batch job for qm simulations to this current folder (*cp ../../namd_qmmm.sh*)
+and submit the jobs with *sbatch namd_qmmm.sh*
