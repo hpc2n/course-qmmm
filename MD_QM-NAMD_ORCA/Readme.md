@@ -55,7 +55,8 @@ changes). Then, click on *Prepare* to save all required files.
 * Close VMD
 
 * Copy the script *namd.sh* to the folder *mdsim/run*, move to this directory
-and submit your script *sbatch namd.sh*. When the simulation finishes, you can
+and submit your script *sbatch namd.sh* (after fixing the project ID and reservation).
+When the simulation finishes, you can
 take a look at the equilibration trajectory *vmd mdsim_QwikMD.psf Equilibration.dcd*.
 
 -------------------------------------------------------------------------------
