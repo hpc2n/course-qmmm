@@ -41,7 +41,7 @@ automatic Atom Renaming. Now there shouldn't be any comments related to
 disable it.
 
 * In the main option of QwikMD called *Advanced Run*, choose the *MD* option.
-Here, choose *Solvent=Explicit*, *Minimal Box*, *Buffer=15A*, *Salt conc.=0.15mol/L*,
+Here, choose *Solvent=Explicit*, *Minimal Box*, *Buffer=12A*, *Salt conc.=0.15mol/L*,
 *Choose Salt=NaCl*.
 
 * In *Protocol*, click on *MD* and then on the symbol *-* to remove this option.
