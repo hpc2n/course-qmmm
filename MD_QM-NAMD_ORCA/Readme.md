@@ -64,39 +64,38 @@ take a look at the equilibration trajectory *vmd mdsim_QwikMD.psf Equilibration.
 * Return to the director MD_QM-NAMD_ORCA ( cd ../.. ) and open VMD. Then,
 Extensions -> Simulation -> QwikMD
 
-* In the box *Load* select the file *mdsim.qwikmd* and open it. A message box will
-ask you what trajectory(ies) you want to load. Choose only *Equilibration* and then
-click on *Load Simulations Last Step*. 
+* In the box *Load* of *Simulation setup* section, select the file *mdsim.qwikmd* and open it.
+A message box will ask you what trajectory(ies) you want to load. Choose only *Equilibration*
+and then click on *Load Simulations Last Step*. 
 
-* Select now the *QM/MM* option from *Advanced Run*. 
-     - For *Protocol*, reduce the number of steps to 5000
+* Select now the *QM/MM* option in *Advanced Run*. 
+     - For *Protocol*, set the number of Minimization steps to 3, Annealing to 3, 
+     Equilibration to 100 and QMMM steps to 5000. 
      - In *QM Regions*, go to *+* symbol to generate a QM selection. Click on that line
       (which contains 1   0  0  1  none) and see that the color becomes blue. 
       Then, select the column *n Atoms* to display the residues.
-      Here, take a radius of 10A, then *Apply* the changes. 
      In *Atom Selection* write *resname GTP MG or segname AP1 and resid 16*,
      which will give you a total charge of -1 for the QM region. Set *Solvent selection*
-     to 0A.  *Apply* the changes. 
+     to 0A.  *Apply* the changes. A total of 67 atoms will be treated quantum mechanically.
 
-* For *QM Options*, use ORCA as the *QM Software*. Select *Set Path* and type:
+* For *QM Options*, select *Set Path* and type:
 
 /cvmfs/ebsw.hpc2n.umu.se/amd64_ubuntu2004_bdw/software/ORCA/5.0.1-gompi-2021a/bin/orca
 
 in the file name line.
 
-* Use the default options for ORCA. 
+* In the *QM Command* box, delete *Grid4* and change *TightSCF* to *NOSOSCF*.
 
-* In *Simulation Setup* write the name of the .qwikmd file:
-.../MD_QM-NAMD_ORCA/qmsim.qwikmd    (the dots should be subtituted by the real path of your
-folder location. Click on *Prepare* and choose *Current Frame*.
+* In *Simulation Setup* write the name of the .qwikmd file (qmsim.qwikmd in the present case):
+Click on *Prepare* and choose *Current Frame*.
 
 * Close VMD and move to the folder qmsim/run. 
 
-* In this folder, add the following line to the *conf* files in the QM related section:
+* In this folder, add the following line in the *conf* files in the QM related section:
 
 qmConfigLine "%PAL NPROCS 10 END"
 
-to run on 10 cores in parallel mode.
+for instance below the line *qmConfigLine "!EnGrad NOSOSCF"*, to run on 10 cores in parallel mode.
 
 * Copy the batch job for qm simulations to this current folder (*cp ../../namd_qmmm.sh*)
-and submit the jobs with *sbatch namd_qmmm.sh*
+and submit the jobs with *sbatch namd_qmmm.sh* (change the project ID).

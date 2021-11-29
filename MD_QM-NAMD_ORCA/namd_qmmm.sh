@@ -12,7 +12,7 @@ ml NAMD/2.14-nompi
 ml ORCA/5.0.1
 
 namd2 +p4 QMMM-Min.conf   > output_minimization.dat
-namd2 +p4 QMMM-Ann.con    > output_annealing.dat
-namd2 +p4 QMMM-Equi.conf  > output_equilibration.dat 
-namd2 +p4 QMMM.conf       > output_production.dat 
+#namd2 +p4 QMMM-Ann.con    > output_annealing.dat
+#namd2 +p4 QMMM-Equi.conf  > output_equilibration.dat 
+#namd2 +p4 QMMM.conf       > output_production.dat 
 
