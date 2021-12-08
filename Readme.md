@@ -26,6 +26,7 @@ Birgitte Brydsö
 
 ```
 cd /proj/nobackup/qmmm2021
+mkdir username   #or any name you like
 git clone https://github.com/hpc2n/course-qmmm.git 
 cd course-qmmm/ 
 ```
