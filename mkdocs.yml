@@ -1,4 +1,4 @@
-site_name: "QM/MM - best practices"
+site_name: QM/MM - best practices
 site_url: https://hpc2n.github.io/course-qmmm
 site_description: Material for the course QM/MM - best practices
 site_dir: site.build
@@ -33,12 +33,12 @@ extra_css:
 nav:
   - Home: index.md
   - Introduction: intro.md
-  - Classical MD simulations: class.md
-    - NAMD+VMD: namdvmd.md
-    - GAUSSIAN/ORCA: gaussianorca.md  
-  - QM/MM simulations: qmmm.md
-    - NAMD+VMD: namdvmd.md
-    - GAUSSIAN/ORCA: gaussianorca.md
+  - Classical MD simulations:
+    - NAMD+VMD: class-namdvmd.md
+    - GAUSSIAN/ORCA: class-gaussianorca.md  
+  - QM/MM simulations: 
+    - NAMD+VMD: qmmm-namdvmd.md
+    - GAUSSIAN/ORCA: qmmm-gaussianorca.md
   - Summary: summary.md
 plugins:
   - search
