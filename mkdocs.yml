@@ -1,4 +1,4 @@
-site_name: QM/MM - best practices
+site_name: "QM/MM - best practices"
 site_url: https://hpc2n.github.io/course-qmmm
 site_description: Material for the course QM/MM - best practices
 site_dir: site.build
