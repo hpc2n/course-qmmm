@@ -34,10 +34,14 @@ nav:
   - Home: index.md
   - Introduction: intro.md
   - Classical MD simulations:
-    - NAMD+VMD: class-namdvmd.md
-    - GAUSSIAN/ORCA: class-gaussianorca.md  
+    - Basic concepts: classical.md
+    - Running simulations: namd.md  
+    - Analyzing simulations: vmd.md  
+  - QM simulations: 
+    - Basic concepts: quantum.md
+    - GAUSSIAN/ORCA: qmmm-gaussianorca.md
   - QM/MM simulations: 
-    - NAMD+VMD: qmmm-namdvmd.md
+    - Basic concepts: qmmm.md
     - GAUSSIAN/ORCA: qmmm-gaussianorca.md
   - Summary: summary.md
 plugins:
