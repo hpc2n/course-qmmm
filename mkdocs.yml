@@ -39,9 +39,7 @@ nav:
     - Analyzing simulations: vmd.md  
   - QM simulations: 
     - Basic concepts: quantum.md
-    - GAUSSIAN/ORCA: qmmm-gaussianorca.md
   - QM/MM simulations: 
-    - Basic concepts: qmmm.md
     - GAUSSIAN/ORCA: qmmm-gaussianorca.md
   - Summary: summary.md
 plugins:
