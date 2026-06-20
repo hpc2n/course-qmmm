@@ -52,7 +52,6 @@ and submit your script *sbatch namd.sh* (after fixing the project ID and reserva
 When the simulation finishes, you can
 take a look at the equilibration trajectory *vmd mdsim_QwikMD.psf Equilibration.dcd*.
 
--------------------------------------------------------------------------------
 
 * Return to the director MD_QM-NAMD_ORCA ( cd ../.. ) and open VMD. Then,
 Extensions -> Simulation -> QwikMD
