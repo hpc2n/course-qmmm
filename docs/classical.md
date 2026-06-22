@@ -118,7 +118,15 @@ Each term captures a physically distinct interaction:
 
 ![Energy Terms](./images/energy_terms.png){: style="width: 300px"}
 
-*Fig. Energy terms. (credits: wikipedia)*
+*Fig. Energy terms contributing to the MD Hamiltonian (credits: wikipedia)*
+
+```{figure} ./images/energy_terms.png
+---
+height: 300px
+name: fi
+---
+Energy terms contributing to the MD Hamiltonian
+```
 
 <figure>
   <img src="./images/energy_terms.png" width="300px">
