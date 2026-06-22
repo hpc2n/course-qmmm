@@ -413,6 +413,9 @@ The MD time step is set by the fastest motion to be resolved (~1–2 fs), and si
 
 > **Rule of thumb:** A simulation should be at least 10–100× longer than the slowest relaxation time of the property you are computing.
 
+![water](./images/accuracy.png){: style="width: 300px"}
+
+*Figure. Time scales for different types of simulations*
 
 ## 16. Software and Workflow
 
