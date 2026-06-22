@@ -116,12 +116,12 @@ Each term captures a physically distinct interaction:
 | Lennard-Jones | Short-range Pauli repulsion ($r^{-12}$) and dispersion ($r^{-6}$) |
 
 
-![Energy Terms](./images/ener_terms.png){: style="width: 300px"}
+![Energy Terms](./images/energy_terms.png){: style="width: 300px"}
 
 *Fig. Energy terms. (credits: wikipedia)*
 
 <figure>
-  <img src="./images/ener_terms.png" width="300">
+  <img src="./images/energy_terms.png" width="300px">
   <figcaption><b>Figure 1.</b> Energy terms contributing to the MD Hamiltonian.</figcaption>
 </figure>
 
