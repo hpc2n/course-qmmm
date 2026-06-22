@@ -115,6 +115,10 @@ Each term captures a physically distinct interaction:
 | Coulomb | Long-range electrostatic interactions between partial charges |
 | Lennard-Jones | Short-range Pauli repulsion ($r^{-12}$) and dispersion ($r^{-6}$) |
 
+
+![Energy Terms](./images/ener_terms.png){: style="width: 300px"}
+*Fig. Energy terms. (credits: wikipedia)*
+
 ### 4.1 Force Field Families
 
 | System | Force field |
@@ -131,7 +135,7 @@ Force fields have evolved continuously. A comparison of protein force fields (PL
 
 The potential energy surface can be complex with many minima and maxima. As a simple illustration, a 2D surface $U = \sin(x) \cdot \cos(y)$ already exhibits multiple minima and maxima that a simulation must navigate.
 
-
+![Potential Energy Surface](./images/ener_surf.png){: style="width: 300px"}
 
 ## 5. Water Models
 
@@ -177,7 +181,8 @@ The **minimum image convention** ensures that each particle interacts only with 
 3. Add counterions to neutralize net charge.
 4. The box must be large enough that the protein does not interact with its own image: minimum distance from protein surface to box edge $\gtrsim 10$–$12$ Å.
 
-
+![Energy Terms](./images/pbc_adk.png){: style="width: 300px"}
+*Fig. Adenylate Kinase in a periodic simulation cell with water and ions*
 
 ## 8. Electrostatic Interactions: Ewald Method
 
