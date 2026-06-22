@@ -189,8 +189,7 @@ The **minimum image convention** ensures that each particle interacts only with 
 
 <figure>
   <img src="./images/pbce.png" width="300">
-  <figcaption><b>Figure</b> Periodic boundary conditions (adapted fromAllen & Tildesley, Comp. Sim. of
-Liquids)</figcaption>
+  <figcaption><b>Figure</b> Periodic boundary conditions (adapted fromAllen & Tildesley, Comp. Sim. of Liquids)</figcaption>
 </figure>
 
 <figure>
