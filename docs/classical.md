@@ -152,7 +152,9 @@ Water is the most common solvent in biomolecular simulations. Models range from 
 
 The choice of water model affects computed properties such as diffusion coefficients, dielectric constant, and density. Always match the water model to your force field and the property of interest.
 
+![water](./images/water_models.png){: style="width: 300px"}
 
+*Figure. 3-5 sites water models. Credits: http://www1.lsbu.ac.uk/water/water models.html*
 
 ## 6. Protein Systems
 
