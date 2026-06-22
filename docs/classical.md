@@ -120,18 +120,7 @@ Each term captures a physically distinct interaction:
 
 *Fig. Energy terms contributing to the MD Hamiltonian (credits: wikipedia)*
 
-```{figure} ./images/energy_terms.png
----
-height: 300px
-name: fi
----
-Energy terms contributing to the MD Hamiltonian
-```
 
-<figure>
-  <img src="./images/energy_terms.png" width="300px">
-  <figcaption><b>Figure 1.</b> Energy terms contributing to the MD Hamiltonian.</figcaption>
-</figure>
 
 ### 4.1 Force Field Families
 
@@ -195,19 +184,13 @@ The **minimum image convention** ensures that each particle interacts only with 
 3. Add counterions to neutralize net charge.
 4. The box must be large enough that the protein does not interact with its own image: minimum distance from protein surface to box edge $\gtrsim 10$–$12$ Å.
 
-<figure>
-  <img src="./images/pbce.png" width="300">
-  <figcaption><b>Figure</b> Periodic boundary conditions (adapted fromAllen & Tildesley, Comp. Sim. of Liquids)</figcaption>
-</figure>
+![PBC](./images/pbce.png){: style="width: 300px"}
 
-<figure>
-  <img src="./images/pbc_adk.png" width="300">
-  <figcaption><b>Figure</b> Adenylate Kinase in a periodic simulation cell with water and ions</figcaption>
-</figure>
+*Figure. Periodic boundary conditions (adapted fromAllen & Tildesley, Comp. Sim. of Liquids)*
 
-![Energy Terms](./images/pbc_adk.png){: style="width: 300px"}
+![PBC ADK](./images/pbc_adk.png){: style="width: 300px"}
 
-*Fig. Adenylate Kinase in a periodic simulation cell with water and ions*
+*Figure. Adenylate Kinase in a periodic simulation cell with water and ions*
 
 ## 8. Electrostatic Interactions: Ewald Method
 
