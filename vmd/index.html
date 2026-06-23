@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://hpc2n.github.io/course-qmmm/vmd/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Analyzing simulations - QM/MM - best practices</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_markdown_exec_pyodide.css" rel="stylesheet" />
+        <link href="../assets/_markdown_exec_ansi.css" rel="stylesheet" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Analyzing simulations";
+        var mkdocs_page_input_path = "vmd.md";
+        var mkdocs_page_url = "/course-qmmm/vmd/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../images/hpc2n-qmmm.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../intro.md">Introduction</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Classical MD simulations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../classical/">Basic concepts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../namd.md">Running simulations</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Analyzing simulations</a>
+    <ul class="current">
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../quantum/">Basic concepts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM/MM simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../qmmm-gaussianorca/">GAUSSIAN/ORCA</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../summary.md">Summary</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">QM/MM - best practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Classical MD simulations</li>
+      <li class="breadcrumb-item active">Analyzing simulations</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="setting-up-a-md-simulation-with-namd-and-vmd">Setting up a MD simulation with NAMD and VMD<a class="headerlink" href="#setting-up-a-md-simulation-with-namd-and-vmd" title="Anchor link to this section for reference">&para;</a></h1>
+<ul>
+<li>
+<p>Download the PDB structure from Protein Data Bank (https://www.rcsb.org/). 
+  In the field &ldquo;Enter search term&rdquo; write  4AKE. Then, use the option &ldquo;Download Files&rdquo;
+  and choose &ldquo;PDB Format&rdquo;. The PDB file will be downloaded to your local machine.
+  Then, you can transfer this file to Kebnekaise (I already did this step, the structure
+  is in this directory).</p>
+</li>
+<li>
+<p>Load the VMD modules on Kebnekaise:</p>
+</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ml purge  &gt; /dev/null 2&gt;&amp;1
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ml GCC/9.3.0  OpenMPI/4.0.3 
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ml VMD/1.9.4a43-Python-2.7.18
+</span></code></pre></div>
+<ul>
+<li>
+<p>Start VMD on the terminal by &ldquo;vmd&rdquo; (assuming your path is the one where you put the 4ake.pdb file).
+Open VMD:  File -&gt; New Molecule -&gt; Browse, choose 4ake.pdb -&gt; OK -&gt; Load and close the 
+Molecule File Browser box dialog.</p>
+</li>
+<li>
+<p>On VMD Main, go to Extensions -&gt; Tk Console write these commands:</p>
+</li>
+<li>(cd $PATH_TO_PDB_FILE if you are working in your local machine)</li>
+<li>set chaina [atomselect top &ldquo;protein and chain A&rdquo;]</li>
+<li>$chaina writepdb 4ake_chaina.pdb</li>
+<li>Quit VMD (File -&gt; Quit)</li>
+<li>
+<p>with your preferred text editor delete the atom 1656 OXT</p>
+</li>
+<li>
+<p>Download the CHARMM36 parameters file toppar_c36_jul20.tgz from MacKerell&rsquo;s lab (http://mackerell.umaryland.edu/charmm_ff.shtml)</p>
+</li>
+<li>extract the files with the command <em>tar zxvf toppar_c36_jul20.tgz</em> (I already did this step)</li>
+<li>
+<p>copy and paste the file <em>top_all36_prot.rtf</em>,  <em>toppar_water_ions.str</em> and <em>par_all36_prot.prm</em> to the same folder level 
+  (same $PATH) than the 4ake_chaina.pdb structure (these files should be already in this folder)</p>
+</li>
+<li>
+<p>write these lines into a file called <em>4ake.pgn</em>:</p>
+</li>
+<li>
+<blockquote>
+<p>package require psfgen</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>topology top_all36_prot.rtf</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>pdbalias residue HIS HSE</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>pdbalias atom ILE CD1 CD</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>segment U {pdb 4ake_chaina.pdb}</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>coordpdb 4ake_chaina.pdb U</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>guesscoord</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>writepdb 4ake_corr.pdb</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>writepsf 4ake_corr.psf</p>
+</blockquote>
+</li>
+<li>
+<p>Correcting Structure. On a Kebnekaise Linux terminal  write:</p>
+</li>
+<li>
+<blockquote>
+<p>vmd -dispdev text -e 4ake.pgn  </p>
+</blockquote>
+</li>
+<li>
+<p>type <em>exit</em> on VMD terminal to close it. You will obtain the .psf and .pdb with hidrogen atoms
+  (4ake_corr.psf, 4ake_corr.psf)</p>
+</li>
+<li>
+<p>Solvation. Start VMD. On VMD Tk Console type:</p>
+</li>
+<li>
+<blockquote>
+<p>package require solvate</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>solvate 4ake_corr.psf 4ake_corr.pdb -t 10 -o 4ake_wb </p>
+</blockquote>
+</li>
+<li>
+<p>Close VMD and check if the solvated protein molecule files (4ake_wb.psf, 4ake_wb.psf) were written.
+  <em>-t 10</em> creates a water box whose sides are 10 Angstrom from the more distant protein atom.</p>
+</li>
+<li>
+<p>Ionization. On VMD, open the Tk console, use the following command to place Na and Cl ions at a 150mM 
+  concentration:</p>
+</li>
+<li>autoionize -psf 4ake_wb.psf -pdb 4ake_wb.pdb -sc 0.15 -cation SOD</li>
+<li>quit VMD</li>
+<li>
+<p>change the names of the resulting files <em>ionized.pdb</em> to <em>4ake_ion.pdb</em> and the same for <em>.psf</em> file</p>
+</li>
+<li>
+<p>On VMD open <em>4ake_ion.psf</em> and <em>4ake_ion.pdb</em>. Then on Tk console type:</p>
+</li>
+<li>
+<blockquote>
+<p>set everyone [atomselect top all]</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>measure minmax $everyone</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>measure center $everyone</p>
+</blockquote>
+</li>
+<li>
+<p>Keep a record of the center of mass position. Quit VMD. </p>
+</li>
+<li>
+<p>Modify the file <em>toppar_water_ions.str</em> (keep a backup copy of it) by adding the symbol <em>!</em>  (comment out) 
+  to the following lines (useful editors: vim,nano,emacs when searching for line numbers):</p>
+</li>
+<li>35-36, 40, 319-320, 322, 324-327, 346, 348-350, 352-353, 355, 358, 367-369, 373-375, 377, 379-380,
+  383-384</li>
+<li>
+<p>on line 42 replace the string <em>@app</em> with <em>append</em> </p>
+</li>
+<li>
+<p>Use the NAMD configuration file <em>4ake_eq.conf</em> and modify the values for the Adjustable Parameters.
+<em>structure</em> corresponds to the <em>.psf</em> file of the ionized solvated protein, and <em>coordinates</em> is the <em>.pdb</em>
+file for the same structure. </p>
+</li>
+<li>
+<p>Use the NAMD configuration file <em>4ake_eq.conf</em> and modify the values for the Periodic Boundary Conditions part.
+The <em>CellBasisVector</em> values can be obtain from your <em>4ake_ion.pdb</em> file on the first line.
+Basis vector 1 corresponds to the first value after CRYST1, and so on for the other vectors.
+These are the values that will replace the <em>FIXME</em> strings in this section. 
+Note: Although the basis vectors from the <em>4ake_ion.pdb</em>  work in the present example, a better
+set of values is 57.13 (vector1), 74.56 (vector2), and 70.97 (vector3).
+cellOrigin  at       -1.8683815002441406 -4.4046807289123535 -10.453012466430664</p>
+</li>
+<li>
+<p>In the batch script <em>namd.sh</em> replace <strong>Project_ID</strong> with the project for the present course. Also,
+add the line <em>#SBATCH &ndash;reservation=</em>. Submit the job to the queue with the command <em>sbatch namd.sh</em></p>
+</li>
+<li>
+<p>Analysis of the results. On a Kebnekaise terminal type: <em>vmd 4ake_ion.psf 4ake_ion_eq.dcd</em>. Then, go to 
+Extensions -&gt; Analysis -&gt; RMSD Trajectory Tool. Check the options <em>Backbone</em>, <em>Plot</em>, and click on
+<em>ALIGN</em> and finally <em>RMSD</em>. This will plot the RMSD of the aligned protein w.r.t. the backbone atoms.</p>
+</li>
+</ul>
+<h1 id="setting-up-a-qmmm-simulation-with-namd-and-vmd">Setting up a QM/MM simulation with NAMD and VMD<a class="headerlink" href="#setting-up-a-qmmm-simulation-with-namd-and-vmd" title="Anchor link to this section for reference">&para;</a></h1>
+<ul>
+<li>
+<p>Because it is not possible to get a better equilibrated structure in a short time, I prepared it already for you.
+This is the structure that we will be working out. The pfs file is <em>4ake_ion_eq.psf</em> and the pdb file <em>4ake_ion_eq.pdb</em>.
+The basis vectors that you may use for this structure are 56.85, 74.16, and 70.59 (use these data for
+the <em>FIXME</em>s. The cell origin is <em>(-1.84, -4.39,  -10.4)</em></p>
+</li>
+<li>
+<p>The configuration file for the QM/MM simulation is <em>4ake_eq_qmmm.conf</em>
+Use the information from the previous paragraph to correct the <em>FIXME</em> strings. </p>
+</li>
+<li>
+<p>Take a look at the configuration files for the classical MD simulation that we just ran (<em>4ake_eq.conf</em>) and the
+one for the QM/MM simulation (<em>4ake_eq_qmmm.conf</em>) notice the options that are different.</p>
+</li>
+<li>
+<p>For a QM/MM simulation you will need a reference .pdb file from where NAMD can read what atoms must
+be considered as QM atoms and also the boundary atoms. The file that we will use for this purpose is
+<em>4ake_ion_qm.pdb</em>. </p>
+<ul>
+<li>
+<p>First the QM atoms. Use the beta column of this .pdb file 
+(https://www.ks.uiuc.edu/Training/Tutorials/namd/namd-tutorial-unix-html/node22.html)
+and replace the value of <em>0.00</em> to <em>1.00</em> for ATOMs 1878 to 1895. In this way, we will make the side chain
+atoms of ARG 123 QM atoms.</p>
+</li>
+<li>
+<p>Second the boundary atoms. Use the occupancy column of the .pdb file 
+(https://www.ks.uiuc.edu/Training/Tutorials/namd/namd-tutorial-unix-html/node22.html)
+and replace the value of <em>0.00</em> to <em>1.00</em> for ATOMs 1876 and 1878. This will make CA and CB
+boundary atoms. </p>
+</li>
+</ul>
+</li>
+<li>
+<p>We also need a script <em>run_gaussian.py</em> for driving the QM simulation inside NAMD. We will use Gaussian
+software for solving the QM part. The options for the Gaussian input script are between lines 18-25.
+Paths for the Gaussian executable are provided in lines 147 and 150. You don&rsquo;t need to change anything
+in this file.</p>
+</li>
+<li>
+<p>In the file <em>4ake_eq_qmmm.conf</em>, correct the line for <em>qmExecPath</em> with the path of the <em>run_gaussian.py</em> 
+    script (where you have been working). The line would look like: qmExecPath &ldquo;/A/B/run_gaussian.py&rdquo; 
+    Correct also the line for <em>qmBaseDir</em> with the path of the directory you are working.
+    The line would look like: qmBaseDir &ldquo;/A/B&rdquo; </p>
+</li>
+<li>
+<p>The batch script for the present QM/MM simulation will be <em>namd_qmmm.sh</em>. Take a look at this script
+and compare it with the previous script for the classical MD simulation <em>namd.sh</em></p>
+</li>
+<li>
+<p>Submit the job with the command <em>sbatch namd_qmmm.sh</em></p>
+</li>
+<li>If everything went well, you will see a new directory called <em>0/</em> which contains the Gaussian input
+file (<em>.com</em>) and the corresponding log file (<em>.log</em>). Also, Gaussian will write a checkpoint file (<em>.chk</em>)
+which is useful upon restarting a simulation.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../classical/" class="btn btn-neutral float-left" title="Basic concepts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../quantum/" class="btn btn-neutral float-right" title="Basic concepts">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../classical/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../quantum/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../assets/_markdown_exec_pyodide.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/open_in_new_tab.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

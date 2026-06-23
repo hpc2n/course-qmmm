@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://hpc2n.github.io/course-qmmm/classical/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Basic concepts - QM/MM - best practices</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_markdown_exec_pyodide.css" rel="stylesheet" />
+        <link href="../assets/_markdown_exec_ansi.css" rel="stylesheet" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Basic concepts";
+        var mkdocs_page_input_path = "classical.md";
+        var mkdocs_page_url = "/course-qmmm/classical/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../images/hpc2n-qmmm.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../intro.md">Introduction</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Classical MD simulations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Basic concepts</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../namd.md">Running simulations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../vmd/">Analyzing simulations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../quantum/">Basic concepts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM/MM simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../qmmm-gaussianorca/">GAUSSIAN/ORCA</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../summary.md">Summary</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">QM/MM - best practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Classical MD simulations</li>
+      <li class="breadcrumb-item active">Basic concepts</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="classical-molecular-dynamics-simulations">Classical molecular dynamics simulations<a class="headerlink" href="#classical-molecular-dynamics-simulations" title="Anchor link to this section for reference">&para;</a></h1>
+<h1 id="computational-chemistry-md-simulations">Computational Chemistry — MD Simulations<a class="headerlink" href="#computational-chemistry-md-simulations" title="Anchor link to this section for reference">&para;</a></h1>
+<p><strong>Instructor:</strong> P. Ojeda-May, pedro.ojeda-may@umu.se<br />
+<strong>Affiliation:</strong> High Performance Computing Center (HPC2N), Umeå University</p>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Anchor link to this section for reference">&para;</a></h2>
+<ol>
+<li><a href="#1-particle-dynamics-and-newtons-equation">Particle Dynamics and Newton&rsquo;s Equation</a></li>
+<li><a href="#2-protein-conformational-space">Protein Conformational Space</a></li>
+<li><a href="#3-historical-context-and-applications">Historical Context and Applications</a></li>
+<li><a href="#4-force-fields">Force Fields</a></li>
+<li><a href="#5-water-models">Water Models</a></li>
+<li><a href="#6-protein-systems">Protein Systems</a></li>
+<li><a href="#7-periodic-boundary-conditions">Periodic Boundary Conditions</a></li>
+<li><a href="#8-electrostatic-interactions-ewald-method">Electrostatic Interactions: Ewald Method</a></li>
+<li><a href="#9-integration-of-newtons-equation">Integration of Newton&rsquo;s Equation</a></li>
+<li><a href="#10-ergodicity">Ergodicity</a></li>
+<li><a href="#11-statistical-ensembles">Statistical Ensembles</a></li>
+<li><a href="#12-thermostats-and-barostats">Thermostats and Barostats</a></li>
+<li><a href="#13-techniques-to-speed-up-simulations">Techniques to Speed Up Simulations</a></li>
+<li><a href="#14-coarse-grain-simulations">Coarse-Grain Simulations</a></li>
+<li><a href="#15-simulation-time-scales">Simulation Time Scales</a></li>
+<li><a href="#16-software-and-workflow">Software and Workflow</a></li>
+<li><a href="#17-references">References</a></li>
+</ol>
+<h2 id="1-particle-dynamics-and-newtons-equation">1. Particle Dynamics and Newton&rsquo;s Equation<a class="headerlink" href="#1-particle-dynamics-and-newtons-equation" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Classical MD simulations are rooted in Newtonian mechanics. The gravitational force between two masses, as Newton described in 1687, reads:</p>
+<div class="arithmatex">\[\mathcal{F} = G\,\frac{m_1 m_2}{r_{12}}\]</div>
+<p>In the molecular context, forces derive from a potential energy function <span class="arithmatex">\(U\)</span>:</p>
+<div class="arithmatex">\[\mathbf{F} = -\nabla U \qquad \text{(Newton's Law, 1687)}\]</div>
+<p>Solving this equation for a system of <span class="arithmatex">\(N\)</span> particles requires knowing the full state of the system at each time step — i.e., the positions and velocities of every particle:</p>
+<div class="arithmatex">\[\mathbf{X} = (x_1^1, x_2^1, x_3^1,\ x_1^2, x_2^2, x_3^2\ \ldots\ x_1^N, x_2^N, x_3^N)\]</div>
+<div class="arithmatex">\[\mathbf{V} = (v_1^1, v_2^1, v_3^1,\ v_1^2, v_2^2, v_3^2\ \ldots\ v_1^N, v_2^N, v_3^N)\]</div>
+<blockquote>
+<p><strong>Key insight:</strong> Given the initial <span class="arithmatex">\(\mathbf{X}\)</span> and <span class="arithmatex">\(\mathbf{V}\)</span>, and a force field that provides <span class="arithmatex">\(U\)</span>, Newton&rsquo;s equations can be integrated numerically to propagate the system forward in time.</p>
+</blockquote>
+<h2 id="2-protein-conformational-space">2. Protein Conformational Space<a class="headerlink" href="#2-protein-conformational-space" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Biomolecular systems explore a rugged <strong>energy landscape</strong> over a multidimensional conformational space:</p>
+<div class="arithmatex">\[\text{Energy} = f(\text{conformational space})\]</div>
+<p>Local minima correspond to stable or metastable conformations; barriers between them govern transition rates. MD simulations sample this landscape by propagating trajectories over time, providing both structural and dynamic information.</p>
+<blockquote>
+<p><strong>Challenge:</strong> The conformational space of a protein is enormous. Adequate sampling — especially of rare events — is one of the central problems in MD.</p>
+</blockquote>
+<h2 id="3-historical-context-and-applications">3. Historical Context and Applications<a class="headerlink" href="#3-historical-context-and-applications" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="31-early-milestones">3.1 Early Milestones<a class="headerlink" href="#31-early-milestones" title="Anchor link to this section for reference">&para;</a></h3>
+<p>MD simulations have roots in three landmark contributions:</p>
+<ul>
+<li><strong>Alder &amp; Wainwright (1957):</strong> Phase transition for a hard sphere system — the first MD simulation.</li>
+<li><strong>Rahman (1964):</strong> Correlations in the motion of atoms in liquid argon — the first MD simulation of a realistic liquid.</li>
+<li><strong>Levitt &amp; Warshel, Nature 253 (1975):</strong> Computer simulation of protein folding.</li>
+</ul>
+<p>The field was recognized with the <strong>Nobel Prize in Chemistry 2013</strong>, awarded to Martin Karplus, Michael Levitt, and Arieh Warshel <em>&ldquo;for the development of multiscale models for complex chemical systems.&rdquo;</em></p>
+<h3 id="32-md-sits-at-the-intersection-of">3.2 MD sits at the intersection of<a class="headerlink" href="#32-md-sits-at-the-intersection-of" title="Anchor link to this section for reference">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>EXPERIMENT ——— THEORY
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>      \         /
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>       SIMULATIONS
+</span></code></pre></div>
+<p>Simulations can both interpret experimental data and test theoretical predictions.</p>
+<h3 id="33-applications">3.3 Applications<a class="headerlink" href="#33-applications" title="Anchor link to this section for reference">&para;</a></h3>
+<p>MD is applied across a broad range of systems:</p>
+<ul>
+<li><strong>Proteins:</strong> conformational dynamics, folding, enzyme catalysis (e.g., AdK enzyme in water).</li>
+<li><strong>Clays:</strong> intercalation, ion transport (JPC C, <strong>118</strong>, 1001 (2014)).</li>
+<li><strong>Food science:</strong> water diffusion in freeze-concentrated sugar matrices; ice-crystal recrystallization rates (Food Biophysics, 2009).</li>
+<li><strong>Materials:</strong> interfacial mechanics between asphalt binder and mineral aggregate (Const. Build. Mat., <strong>121</strong>, 246 (2016)).</li>
+</ul>
+<h2 id="4-force-fields">4. Force Fields<a class="headerlink" href="#4-force-fields" title="Anchor link to this section for reference">&para;</a></h2>
+<p>The potential energy function <span class="arithmatex">\(U\)</span> used in classical MD is the <strong>force field</strong>. A standard form (e.g., CHARMM, AMBER) is:</p>
+<div class="arithmatex">\[U = \underbrace{\sum_{\text{bonds}} \frac{1}{2}k_\text{bonds}(r - r_0)^2}_{\text{bond stretching}}
+  + \underbrace{\sum_{\text{angles}} \frac{1}{2}k_\text{angle}(\theta - \theta_0)^2}_{\text{angle bending}}
+  + \underbrace{\sum_{\text{torsions}}\sum_j V_j(1 + \cos j\phi)}_{\text{torsions}}\]</div>
+<div class="arithmatex">\[+ \underbrace{\sum_{i&lt;j}^{\text{Coulomb}} \frac{q_i q_j}{r_{ij}}}_{\text{electrostatics}}
+  + \underbrace{\sum_{i&lt;j}^{\text{VdW}} \left\{4\epsilon_{ij}\left[\left(\frac{\sigma_{ij}}{r_{ij}}\right)^{12} - \left(\frac{\sigma_{ij}}{r_{ij}}\right)^{6}\right]\right\}}_{\text{Lennard-Jones}}\]</div>
+<p>Each term captures a physically distinct interaction:</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Physical origin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bond stretching</td>
+<td>Harmonic approximation around equilibrium bond length <span class="arithmatex">\(r_0\)</span></td>
+</tr>
+<tr>
+<td>Angle bending</td>
+<td>Harmonic approximation around equilibrium angle <span class="arithmatex">\(\theta_0\)</span></td>
+</tr>
+<tr>
+<td>Torsion</td>
+<td>Periodic barrier to rotation about a dihedral angle <span class="arithmatex">\(\phi\)</span></td>
+</tr>
+<tr>
+<td>Coulomb</td>
+<td>Long-range electrostatic interactions between partial charges</td>
+</tr>
+<tr>
+<td>Lennard-Jones</td>
+<td>Short-range Pauli repulsion (<span class="arithmatex">\(r^{-12}\)</span>) and dispersion (<span class="arithmatex">\(r^{-6}\)</span>)</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Energy Terms" src="../images/energy_terms.png" style="width: 300px" /></p>
+<p><em>Fig. Energy terms contributing to the MD Hamiltonian (credits: wikipedia)</em></p>
+<h3 id="41-force-field-families">4.1 Force Field Families<a class="headerlink" href="#41-force-field-families" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Force field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Proteins &amp; hydrocarbons</td>
+<td>GROMOS, OPLS-AA, AMBER, CHARMM</td>
+</tr>
+<tr>
+<td>Clays</td>
+<td>CLAYFF</td>
+</tr>
+<tr>
+<td>Coarse-grained</td>
+<td>MARTINI</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> If the parameters of your compound are not included in any available force field, you need to derive them using QM approaches.</p>
+</blockquote>
+<h3 id="42-force-field-quality">4.2 Force Field Quality<a class="headerlink" href="#42-force-field-quality" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Force fields have evolved continuously. A comparison of protein force fields (PLoS ONE, 7, e32131, 2012) shows that newer force fields (e.g., ff99SB*-ILDN, CHARMM22*) score lower on structural bias metrics — indicating better agreement with experimental observables — than older ones (CHARMM22, OPLS-AA).</p>
+<p>The potential energy surface can be complex with many minima and maxima. As a simple illustration, a 2D surface <span class="arithmatex">\(U = \sin(x) \cdot \cos(y)\)</span> already exhibits multiple minima and maxima that a simulation must navigate.</p>
+<p><img alt="Potential Energy Surface" src="../images/ener_surf.png" style="width: 300px" /></p>
+<h2 id="5-water-models">5. Water Models<a class="headerlink" href="#5-water-models" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Water is the most common solvent in biomolecular simulations. Models range from <strong>3-site</strong> (SPC, TIP3P) to <strong>5-site</strong> (TIP5P), differing in the number of interaction sites, geometry, and how polarization is handled:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Sites</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPC / TIP3P</td>
+<td>3</td>
+<td>Simple, widely used, fast</td>
+</tr>
+<tr>
+<td>TIP4P</td>
+<td>4</td>
+<td>Improved liquid structure</td>
+</tr>
+<tr>
+<td>TIP5P</td>
+<td>5</td>
+<td>Better density maximum near 4°C</td>
+</tr>
+</tbody>
+</table>
+<p>The choice of water model affects computed properties such as diffusion coefficients, dielectric constant, and density. Always match the water model to your force field and the property of interest.</p>
+<p><img alt="water" src="../images/water_models.png" style="width: 300px" /></p>
+<p><em>Figure. 3-5 sites water models. Credits: http://www1.lsbu.ac.uk/water/water models.html</em></p>
+<h2 id="6-protein-systems">6. Protein Systems<a class="headerlink" href="#6-protein-systems" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="61-the-building-blocks">6.1 The Building Blocks<a class="headerlink" href="#61-the-building-blocks" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Proteins are polymers of 20 natural amino acids, grouped by side-chain character: small (Gly, Ala), nucleophilic (Ser, Thr, Cys), hydrophobic (Val, Leu, Ile, Met, Pro), aromatic (Phe, Tyr, Trp), acidic (Asp, Glu), amide (Asn, Gln), basic (His, Lys, Arg).</p>
+<h3 id="62-obtaining-structures">6.2 Obtaining Structures<a class="headerlink" href="#62-obtaining-structures" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Starting structures are usually obtained from the <strong>Protein Data Bank (PDB)</strong>. For example, Adenylate Kinase (AdK, yeast, ~214 residues) is a model system for conformational change studies. PDB entries provide:</p>
+<ul>
+<li>Primary sequence and secondary structure assignment (SCOP/DSSP).</li>
+<li>Atomic coordinates of the folded structure.</li>
+</ul>
+<blockquote>
+<p><strong>Caution:</strong> PDB structures may be missing hydrogen atoms, contain non-standard residues, lack ligands, or have crystallographic artifacts. Careful system preparation is mandatory before running MD.</p>
+</blockquote>
+<h2 id="7-periodic-boundary-conditions-pbc">7. Periodic Boundary Conditions (PBC)<a class="headerlink" href="#7-periodic-boundary-conditions-pbc" title="Anchor link to this section for reference">&para;</a></h2>
+<p>MD simulation boxes contain <span class="arithmatex">\(\mathcal{O}(10^3\)</span>–<span class="arithmatex">\(10^6)\)</span> atoms, far fewer than the <span class="arithmatex">\(\sim 10^{23}\)</span> particles in a real experiment. To avoid artificial surface effects, we use <strong>periodic boundary conditions</strong>: the simulation box is replicated in all directions, and a particle exiting one face re-enters from the opposite face.</p>
+<p>The <strong>minimum image convention</strong> ensures that each particle interacts only with the nearest image of every other particle (Allen &amp; Tildesley, <em>Computer Simulation of Liquids</em>).</p>
+<p><strong>Practical setup for a protein:</strong></p>
+<ol>
+<li>Place the protein at the center of a (typically cubic or orthorhombic) box.</li>
+<li>Solvate with water molecules.</li>
+<li>Add counterions to neutralize net charge.</li>
+<li>The box must be large enough that the protein does not interact with its own image: minimum distance from protein surface to box edge <span class="arithmatex">\(\gtrsim 10\)</span>–<span class="arithmatex">\(12\)</span> Å.</li>
+</ol>
+<p><img alt="PBC" src="../images/pbce.png" style="width: 300px" /></p>
+<p><em>Figure. Periodic boundary conditions (adapted fromAllen &amp; Tildesley, Comp. Sim. of Liquids)</em></p>
+<p><img alt="PBC ADK" src="../images/pbc_adk.png" style="width: 300px" /></p>
+<p><em>Figure. Adenylate Kinase in a periodic simulation cell with water and ions</em></p>
+<h2 id="8-electrostatic-interactions-ewald-method">8. Electrostatic Interactions: Ewald Method<a class="headerlink" href="#8-electrostatic-interactions-ewald-method" title="Anchor link to this section for reference">&para;</a></h2>
+<p>The electrostatic energy of a periodic system is a conditionally convergent sum over all periodic images:</p>
+<div class="arithmatex">\[E = \frac{1}{2}\sum_{\mathbf{m}\in\mathbb{Z}^3}\sum_{i,j=1}^{N}{}' \frac{q_i q_j}{|\mathbf{r}_{ij} + \mathbf{m}L|}\]</div>
+<p>where <span class="arithmatex">\(\mathbf{r}_{ij} = \mathbf{r}_i - \mathbf{r}_j\)</span>, <span class="arithmatex">\(\mathbf{m}\)</span> runs over all periodic images, the prime excludes the <span class="arithmatex">\(i=j\)</span> self-interaction at <span class="arithmatex">\(\mathbf{m}=\mathbf{0}\)</span>, and <span class="arithmatex">\(q_x\)</span> is the partial charge on atom <span class="arithmatex">\(x\)</span>.</p>
+<blockquote>
+<p><strong>Reference:</strong> Adv. Polym. Sci., <strong>185</strong>, 59 (2005).</p>
+</blockquote>
+<p>Naive direct summation of this series is not feasible for large systems. The <strong>Ewald method</strong> splits the sum into a rapidly converging short-range term in real space and a long-range term in reciprocal space:</p>
+<div class="arithmatex">\[E = E_\text{real} + E_\text{recip} + E_\text{self}\]</div>
+<p>The <strong>Particle Mesh Ewald (PME)</strong> method maps charges onto a mesh and uses Fast Fourier Transforms to evaluate the reciprocal-space sum, reducing the cost from <span class="arithmatex">\(\mathcal{O}(N^2)\)</span> to <span class="arithmatex">\(\mathcal{O}(N\log N)\)</span>.</p>
+<blockquote>
+<p><strong>Always use PME</strong> (or an equivalent long-range method) in biomolecular simulations. Cutoff-only electrostatics introduces large artifacts in dynamics and thermodynamics.</p>
+</blockquote>
+<h2 id="9-integration-of-newtons-equation">9. Integration of Newton&rsquo;s Equation<a class="headerlink" href="#9-integration-of-newtons-equation" title="Anchor link to this section for reference">&para;</a></h2>
+<p>With the force field providing <span class="arithmatex">\(U\)</span>, Newton&rsquo;s second law is:</p>
+<div class="arithmatex">\[\mathbf{F} = m\mathbf{a} = -\nabla U\]</div>
+<p>This ordinary differential equation is integrated numerically. A common scheme is the <strong>leap-frog algorithm</strong> (Hockney, 1970), which staggers positions and velocities by half a time step:</p>
+<div class="arithmatex">\[\mathbf{r}(t + \delta t) = \mathbf{r}(t) + \delta t\,\mathbf{v}\!\left(t + \tfrac{1}{2}\delta t\right)\]</div>
+<div class="arithmatex">\[\mathbf{v}\!\left(t + \tfrac{1}{2}\delta t\right) = \mathbf{v}\!\left(t - \tfrac{1}{2}\delta t\right) + \delta t\,\mathbf{a}(t)\]</div>
+<p>Velocities at integer time steps are recovered by averaging:</p>
+<div class="arithmatex">\[\mathbf{v}(t) = \frac{1}{2}\left[\mathbf{v}\!\left(t + \tfrac{1}{2}\delta t\right) + \mathbf{v}\!\left(t - \tfrac{1}{2}\delta t\right)\right]\]</div>
+<h3 id="choosing-the-time-step-delta-t">Choosing the Time Step <span class="arithmatex">\(\delta t\)</span><a class="headerlink" href="#choosing-the-time-step-delta-t" title="Anchor link to this section for reference">&para;</a></h3>
+<p>The time step must be small enough to resolve the fastest motion in the system. The fastest motions in biomolecules are bond stretches involving hydrogen (<span class="arithmatex">\(\sim\)</span>10–20 fs period). Typical choices:</p>
+<table>
+<thead>
+<tr>
+<th>Constraint</th>
+<th><span class="arithmatex">\(\delta t\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All bonds flexible</td>
+<td>1 fs</td>
+</tr>
+<tr>
+<td>H-bond lengths constrained (LINCS/SHAKE)</td>
+<td>2 fs</td>
+</tr>
+<tr>
+<td>All bonds constrained</td>
+<td>up to 4 fs</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-ergodicity">10. Ergodicity<a class="headerlink" href="#10-ergodicity" title="Anchor link to this section for reference">&para;</a></h2>
+<p>The <strong>ergodic hypothesis</strong> states that, given sufficient time, a system visits all accessible microstates. This underpins the equivalence of time averages and ensemble averages:</p>
+<div class="arithmatex">\[\mathcal{A}_\text{obs} = \langle \mathcal{A} \rangle_\text{time}
+= \langle \mathcal{A}(\Gamma(t)) \rangle_\text{time}
+= \lim_{t_\text{obs}\to\infty} \int_0^{t_\text{obs}} \mathcal{A}(\Gamma(t))\,dt\]</div>
+<p>where <span class="arithmatex">\(\Gamma(t) = \{\mathbf{r}(t), \mathbf{p}(t)\}\)</span> is the phase-space trajectory.</p>
+<blockquote>
+<p><strong>Practical implication:</strong> If a simulation is not ergodic on the accessible time scale (i.e., it gets trapped in a local minimum), time averages will not equal ensemble averages and the results will be biased. Adequate sampling must always be verified.</p>
+</blockquote>
+<p>The analogy: a cup of coffee with cream will eventually reach a uniform mixture — given enough time, any initial configuration will be sampled.</p>
+<h2 id="11-statistical-ensembles">11. Statistical Ensembles<a class="headerlink" href="#11-statistical-ensembles" title="Anchor link to this section for reference">&para;</a></h2>
+<p>MD simulations sample one of several statistical mechanical ensembles, each characterized by which thermodynamic variables are held fixed.</p>
+<h3 id="111-microcanonical-ensemble-nve">11.1 Microcanonical Ensemble (NVE)<a class="headerlink" href="#111-microcanonical-ensemble-nve" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Constant number of particles <span class="arithmatex">\(N\)</span>, volume <span class="arithmatex">\(V\)</span>, and energy <span class="arithmatex">\(E\)</span>. The partition function is:</p>
+<div class="arithmatex">\[Q_{NVE} = \frac{1}{N!\,h^{3N}} \int d\mathbf{r}\,d\mathbf{p}\;\delta(\mathcal{H}(\mathbf{r},\mathbf{p}) - E)\]</div>
+<p>The thermodynamic potential is the entropy: <span class="arithmatex">\(-S/k_B = -\ln Q_{NVE}\)</span>.</p>
+<h3 id="112-canonical-ensemble-nvt">11.2 Canonical Ensemble (NVT)<a class="headerlink" href="#112-canonical-ensemble-nvt" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Constant <span class="arithmatex">\(N\)</span>, <span class="arithmatex">\(V\)</span>, and temperature <span class="arithmatex">\(T\)</span>. The partition function is:</p>
+<div class="arithmatex">\[Q_{NVT} = \frac{1}{N!\,h^{3N}} \int d\mathbf{r}\,d\mathbf{p}\;\exp\!\left(-\frac{\mathcal{H}(\mathbf{r},\mathbf{p})}{k_B T}\right)\]</div>
+<p>The thermodynamic potential is the Helmholtz free energy: <span class="arithmatex">\(A/k_B T = -\ln Q_{NVT}\)</span>.</p>
+<h3 id="113-isothermal-isobaric-ensemble-npt">11.3 Isothermal-Isobaric Ensemble (NPT)<a class="headerlink" href="#113-isothermal-isobaric-ensemble-npt" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Constant <span class="arithmatex">\(N\)</span>, pressure <span class="arithmatex">\(P\)</span>, and <span class="arithmatex">\(T\)</span>. The partition function is:</p>
+<div class="arithmatex">\[Q_{NPT} = \frac{1}{N!\,h^{3N}\,V_0} \int dV \int d\mathbf{r}\,d\mathbf{p}\;\exp\!\left(-\frac{\mathcal{H}(\mathbf{r},\mathbf{p}) + PV}{k_B T}\right)\]</div>
+<p>The thermodynamic potential is the Gibbs free energy: <span class="arithmatex">\(G/k_B = -\ln Q_{NPT}\)</span>.</p>
+<h3 id="114-grand-canonical-ensemble-muvt">11.4 Grand-Canonical Ensemble (<span class="arithmatex">\(\mu\)</span>VT)<a class="headerlink" href="#114-grand-canonical-ensemble-muvt" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Constant chemical potential <span class="arithmatex">\(\mu\)</span>, <span class="arithmatex">\(V\)</span>, and <span class="arithmatex">\(T\)</span>. The partition function is:</p>
+<div class="arithmatex">\[Q_{\mu VT} = \sum_N \frac{1}{N!\,h^{3N}} \exp\!\left(\frac{\mu N}{k_B T}\right) \int d\mathbf{r}\,d\mathbf{p}\;\exp\!\left(-\frac{\mathcal{H}(\mathbf{r},\mathbf{p})}{k_B T}\right)\]</div>
+<p>The thermodynamic potential is <span class="arithmatex">\(-PV/k_B = -\ln Q_{\mu VT}\)</span>.</p>
+<h3 id="summary">Summary<a class="headerlink" href="#summary" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Ensemble</th>
+<th>Fixed</th>
+<th>Thermodynamic potential</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NVE</td>
+<td><span class="arithmatex">\(N, V, E\)</span></td>
+<td><span class="arithmatex">\(-S/k_B = -\ln Q_{NVE}\)</span></td>
+</tr>
+<tr>
+<td>NVT</td>
+<td><span class="arithmatex">\(N, V, T\)</span></td>
+<td><span class="arithmatex">\(A/k_BT = -\ln Q_{NVT}\)</span></td>
+</tr>
+<tr>
+<td>NPT</td>
+<td><span class="arithmatex">\(N, P, T\)</span></td>
+<td><span class="arithmatex">\(G/k_BT = -\ln Q_{NPT}\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\mu\)</span>VT</td>
+<td><span class="arithmatex">\(\mu, V, T\)</span></td>
+<td><span class="arithmatex">\(-PV/k_B = -\ln Q_{\mu VT}\)</span></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>In practice:</strong> NPT is the most common choice for biomolecular simulations, since experiments are typically run at constant pressure and temperature.</p>
+</blockquote>
+<h2 id="12-thermostats-and-barostats">12. Thermostats and Barostats<a class="headerlink" href="#12-thermostats-and-barostats" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="121-obtaining-different-ensembles">12.1 Obtaining Different Ensembles<a class="headerlink" href="#121-obtaining-different-ensembles" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li><strong>NVE</strong> is obtained by integrating Newton&rsquo;s equations without any coupling to external baths.</li>
+<li><strong>NVT</strong> requires a thermostat to maintain constant temperature.</li>
+<li><strong>NPT</strong> requires both a thermostat and a barostat.</li>
+</ul>
+<h3 id="122-thermostats">12.2 Thermostats<a class="headerlink" href="#122-thermostats" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Common thermostats for NVT:</p>
+<ul>
+<li><strong>Berendsen:</strong> rescales velocities toward the target temperature; fast but does not rigorously reproduce the canonical ensemble.</li>
+<li><strong>Velocity rescaling (v-rescale):</strong> stochastic extension of Berendsen that does produce the correct NVT ensemble.</li>
+<li><strong>Nosé–Hoover:</strong> extends the Hamiltonian with a fictitious &ldquo;heat bath&rdquo; degree of freedom <span class="arithmatex">\(\xi\)</span> with momentum <span class="arithmatex">\(p_\xi\)</span> and mass <span class="arithmatex">\(Q\)</span>:</li>
+</ul>
+<div class="arithmatex">\[H = \sum_{i=1}^{N} \frac{\mathbf{p}_i}{2m_i} + U(\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_N) + \frac{p_\xi^2}{2Q} + N_f k_B T\xi\]</div>
+<p>where <span class="arithmatex">\(N_f\)</span> is the number of degrees of freedom. A better approach is the <strong>Nosé–Hoover chain</strong>, which chains multiple thermostats to improve ergodicity.</p>
+<h3 id="123-barostats">12.3 Barostats<a class="headerlink" href="#123-barostats" title="Anchor link to this section for reference">&para;</a></h3>
+<p>For NPT simulations:</p>
+<ul>
+<li><strong>Berendsen barostat:</strong> scales the box dimensions; produces approximate NPT.</li>
+<li><strong>Parrinello–Rahman barostat:</strong> correct NPT ensemble; recommended for production runs.</li>
+</ul>
+<blockquote>
+<p><strong>Practical advice:</strong> Use the Berendsen thermostat/barostat during equilibration (fast convergence), then switch to Nosé–Hoover / Parrinello–Rahman for production (correct ensemble statistics).</p>
+</blockquote>
+<h2 id="13-techniques-to-speed-up-simulations">13. Techniques to Speed Up Simulations<a class="headerlink" href="#13-techniques-to-speed-up-simulations" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="131-the-bottleneck">13.1 The Bottleneck<a class="headerlink" href="#131-the-bottleneck" title="Anchor link to this section for reference">&para;</a></h3>
+<p>The dominant cost in classical MD is evaluating the non-bonded interactions (Coulomb + Lennard-Jones) between all pairs of atoms: naively <span class="arithmatex">\(\mathcal{O}(N^2)\)</span>. PME reduces the electrostatic cost to <span class="arithmatex">\(\mathcal{O}(N\log N)\)</span>; neighbor lists and cutoffs reduce the real-space LJ cost.</p>
+<h3 id="132-parallelization">13.2 Parallelization<a class="headerlink" href="#132-parallelization" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Single-processor (serial) computation processes tasks sequentially — like a single queue at a checkout. Parallelization opens multiple queues simultaneously:</p>
+<p><strong>MPI parallelization:</strong> the simulation domain is decomposed across multiple compute nodes, each holding a spatial subdomain. Communication between nodes exchanges boundary information.</p>
+<div class="language-fortran highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">do </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">num_particles</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">dt</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">enddo</span>
+</span></code></pre></div>
+<p>In parallel, this loop is distributed: each MPI rank updates the positions of its own subset of particles.</p>
+<p><strong>MPI + OpenMP (hybrid):</strong> MPI handles inter-node communication; OpenMP threads exploit shared memory within each NUMA node.</p>
+<p><strong>Domain decomposition:</strong> the simulation box is divided into spatial cells. Interactions are only computed between particles in neighboring cells (within the cutoff radius), eliminating the <span class="arithmatex">\(\mathcal{O}(N^2)\)</span> scaling.</p>
+<p><strong>Multiple communicators:</strong> separate communicators handle different classes of interactions or parts of the force evaluation pipeline.</p>
+<h3 id="133-gpu-acceleration">13.3 GPU Acceleration<a class="headerlink" href="#133-gpu-acceleration" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Modern MD codes (GROMACS, AMBER, NAMD, OpenMM) offload non-bonded force calculations to GPUs, achieving 10–100× speedups over CPU-only runs for typical biomolecular systems.</p>
+<h3 id="134-shake-lincs-constraints">13.4 SHAKE / LINCS Constraints<a class="headerlink" href="#134-shake-lincs-constraints" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Constraining bond lengths involving hydrogen allows a larger time step (<span class="arithmatex">\(\delta t = 2\)</span> fs instead of 1 fs), effectively doubling simulation speed at no accuracy cost for most properties.</p>
+<h2 id="14-coarse-grain-simulations">14. Coarse-Grain Simulations<a class="headerlink" href="#14-coarse-grain-simulations" title="Anchor link to this section for reference">&para;</a></h2>
+<p>All-atom MD is limited in both system size (<span class="arithmatex">\(\lesssim 10^6\)</span> atoms) and time scale (<span class="arithmatex">\(\lesssim \mu\)</span>s for most codes). <strong>Coarse-graining (CG)</strong> reduces the number of degrees of freedom by grouping atoms into &ldquo;beads&rdquo;:</p>
+<ul>
+<li>Several heavy atoms + their hydrogens → one CG bead.</li>
+<li>The effective potential between beads is parameterized to reproduce thermodynamic properties of the all-atom system.</li>
+</ul>
+<p>A typical CG representation of a protein maps backbone atoms (BB), polar side-chain atoms (POL), non-polar side chains (NPOL), and charged groups (NEG) onto separate bead types.</p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Fewer interaction sites → larger time step and faster force evaluation.</li>
+<li>Smoother energy landscape → better sampling of slow conformational changes.</li>
+<li>Access to longer time scales (<span class="arithmatex">\(\mu\)</span>s–ms) and larger system sizes (e.g., entire viruses, cell membranes).</li>
+</ul>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>Loss of atomic detail — electronic properties, H-bond geometry, quantum effects unavailable.</li>
+<li>Parameterization is system-specific and must be validated against experiment or all-atom data.</li>
+</ul>
+<p><strong>Common CG model:</strong> MARTINI force field — widely used for lipids, proteins, and polymers.</p>
+<blockquote>
+<p><strong>Reference:</strong> Annu. Rev. Biophys., <strong>42</strong>, 73 (2013).</p>
+</blockquote>
+<h2 id="15-simulation-time-scales">15. Simulation Time Scales<a class="headerlink" href="#15-simulation-time-scales" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Different modeling approaches access different time and length scales:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Nr. of atoms</th>
+<th>Accessible time scale</th>
+<th>Characteristic motions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ab initio QM</td>
+<td><span class="arithmatex">\(\sim 10\)</span>–100</td>
+<td>fs</td>
+<td>Bond vibrations</td>
+</tr>
+<tr>
+<td>Semi-empirical QM</td>
+<td><span class="arithmatex">\(\sim 100\)</span>–1000</td>
+<td>ps</td>
+<td>Bond isomerization</td>
+</tr>
+<tr>
+<td>Classical MD (all-atom)</td>
+<td><span class="arithmatex">\(\sim 10^3\)</span>–<span class="arithmatex">\(10^6\)</span></td>
+<td>ns</td>
+<td>Water dynamics, protein local motions</td>
+</tr>
+<tr>
+<td>Classical MD (all-atom, optimized)</td>
+<td><span class="arithmatex">\(\sim 10^6\)</span></td>
+<td><span class="arithmatex">\(\mu\)</span>s</td>
+<td>Conformational changes</td>
+</tr>
+<tr>
+<td>Coarse-grain MD</td>
+<td><span class="arithmatex">\(\sim 10^6\)</span>–<span class="arithmatex">\(10^9\)</span></td>
+<td><span class="arithmatex">\(\mu\)</span>s–ms</td>
+<td>Folding, assembly</td>
+</tr>
+</tbody>
+</table>
+<p>The MD time step is set by the fastest motion to be resolved (~1–2 fs), and simulations must run long enough to achieve ergodic sampling of the process of interest.</p>
+<blockquote>
+<p><strong>Rule of thumb:</strong> A simulation should be at least 10–100× longer than the slowest relaxation time of the property you are computing.</p>
+</blockquote>
+<p><img alt="water" src="../images/accuracy.png" style="width: 300px" /></p>
+<p><em>Figure. Time scales for different types of simulations</em></p>
+<h2 id="16-software-and-workflow">16. Software and Workflow<a class="headerlink" href="#16-software-and-workflow" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="161-common-md-software-packages">16.1 Common MD Software Packages<a class="headerlink" href="#161-common-md-software-packages" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Software</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NAMD</strong></td>
+<td>Excellent scaling on CPUs; supports QM/MM</td>
+</tr>
+<tr>
+<td><strong>GROMACS</strong></td>
+<td>Very fast; strong GPU support; free and open source</td>
+</tr>
+<tr>
+<td><strong>AMBER</strong></td>
+<td>Strong GPU performance; excellent for biomolecules</td>
+</tr>
+<tr>
+<td><strong>OpenMM</strong></td>
+<td>Python-friendly; highly extensible; GPU-native</td>
+</tr>
+<tr>
+<td><strong>CHARMM</strong></td>
+<td>Feature-rich; strong for free energy methods and QM/MM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="162-a-standard-md-simulation-protocol">16.2 A Standard MD Simulation Protocol<a class="headerlink" href="#162-a-standard-md-simulation-protocol" title="Anchor link to this section for reference">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1. Setting up the system
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   ├── Obtain/build coordinates (PDB, homology model, etc.)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   ├── Add missing atoms, assign protonation states
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>   ├── Define force field parameters
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>   ├── Solvate in a water box (PBC)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>   └── Neutralize with counterions (add salt to physiological concentration)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>2. Energy minimization
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>   └── Remove steric clashes from initial configuration
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>       (e.g., steepest descent until max force &lt; 1000 kJ mol⁻¹ nm⁻¹)
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>3. Equilibration
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>   ├── NVT: heat to target temperature with position restraints on solute
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>   └── NPT: equilibrate pressure with position restraints on solute
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>4. Production run
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>   └── NPT without restraints; collect trajectory for analysis
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>5. Analysis
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>   ├── RMSD, RMSF
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>   ├── Radius of gyration
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>   ├── Radial distribution functions
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>   ├── Hydrogen bond analysis
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>   ├── Free energy calculations (PMF, FEP, TI)
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>   └── Principal component analysis (PCA)
+</span></code></pre></div>
+<blockquote>
+<p><strong>Important:</strong> Always check convergence of the energy, temperature, pressure, density, and structural properties before analyzing production data.</p>
+</blockquote>
+<h2 id="17-references">17. References<a class="headerlink" href="#17-references" title="Anchor link to this section for reference">&para;</a></h2>
+<ul>
+<li>Leach, A. R. <em>Molecular Modelling: Principles and Applications</em>, 2nd edition. Prentice Hall.</li>
+<li>Allen, M. P. &amp; Tildesley, D. J. <em>Computer Simulation of Liquids</em>. Oxford University Press.</li>
+<li>Frenkel, D. &amp; Smit, B. <em>Understanding Molecular Simulation</em>, 2nd edition. Academic Press.</li>
+<li>Alder, B. J. &amp; Wainwright, T. E. Phase transition for a hard sphere system. <em>J. Chem. Phys.</em> (1957).</li>
+<li>Rahman, A. Correlations in the motion of atoms in liquid argon. <em>Phys. Rev.</em> <strong>136</strong>, A405 (1964).</li>
+<li>Levitt, M. &amp; Warshel, A. Computer simulation of protein folding. <em>Nature</em> <strong>253</strong>, 694 (1975).</li>
+<li>Hockney, R. W. The potential calculation and some applications. <em>Methods Comput. Phys.</em> <strong>9</strong>, 136 (1970).</li>
+<li>Adv. Polym. Sci., <strong>185</strong>, 59 (2005) — Ewald summation review.</li>
+<li>Piana, S. et al. Force field comparison, PLoS ONE, 7, e32131 (2012).</li>
+<li>Annu. Rev. Biophys., <strong>42</strong>, 73 (2013) — Coarse-grain simulations.</li>
+<li>JPC C, <strong>118</strong>, 1001 (2014) — Clay MD simulations.</li>
+<li>Const. Build. Mat., <strong>121</strong>, 246 (2016) — Asphalt MD simulations.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../vmd/" class="btn btn-neutral float-right" title="Analyzing simulations">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../vmd/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../assets/_markdown_exec_pyodide.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/open_in_new_tab.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

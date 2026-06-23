@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://hpc2n.github.io/course-qmmm/</loc>
+         <lastmod>2026-06-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://hpc2n.github.io/course-qmmm/classical/</loc>
+         <lastmod>2026-06-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://hpc2n.github.io/course-qmmm/qmmm-gaussianorca/</loc>
+         <lastmod>2026-06-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://hpc2n.github.io/course-qmmm/quantum/</loc>
+         <lastmod>2026-06-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://hpc2n.github.io/course-qmmm/vmd/</loc>
+         <lastmod>2026-06-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://hpc2n.github.io/course-qmmm/quantum/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Basic concepts - QM/MM - best practices</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_markdown_exec_pyodide.css" rel="stylesheet" />
+        <link href="../assets/_markdown_exec_ansi.css" rel="stylesheet" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Basic concepts";
+        var mkdocs_page_input_path = "quantum.md";
+        var mkdocs_page_url = "/course-qmmm/quantum/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../images/hpc2n-qmmm.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../intro.md">Introduction</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Classical MD simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../classical/">Basic concepts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../namd.md">Running simulations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../vmd/">Analyzing simulations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM simulations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Basic concepts</a>
+    <ul class="current">
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM/MM simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../qmmm-gaussianorca/">GAUSSIAN/ORCA</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../summary.md">Summary</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">QM/MM - best practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">QM simulations</li>
+      <li class="breadcrumb-item active">Basic concepts</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="qmmm-methods-for-biomolecular-simulations">QM/MM Methods for Biomolecular Simulations<a class="headerlink" href="#qmmm-methods-for-biomolecular-simulations" title="Anchor link to this section for reference">&para;</a></h1>
+<h1 id="learning-objectives">Learning Objectives<a class="headerlink" href="#learning-objectives" title="Anchor link to this section for reference">&para;</a></h1>
+<p>By the end of this workshop participants should be able to:</p>
+<ol>
+<li>Explain why QM/MM methods are needed.</li>
+<li>Distinguish between QM, MM, and coarse-grained models.</li>
+<li>Understand the QM/MM Hamiltonian.</li>
+<li>Describe common QM/MM embedding schemes.</li>
+<li>Select an appropriate QM region.</li>
+<li>Recognize practical issues in QM/MM calculations.</li>
+<li>Evaluate the advantages and limitations of QM/MM simulations.</li>
+</ol>
+<p><strong>Duration:</strong> 2 hours<br />
+<strong>Instructor:</strong> Pedro Ojeda-May, Application Expert, HPC2N<br />
+<em>Based on slides by Kwangho Nam, University of Texas at Arlington</em></p>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Anchor link to this section for reference">&para;</a></h2>
+<ol>
+<li><a href="#1-motivation-why-qmmm">Motivation: Why QM/MM?</a></li>
+<li><a href="#2-overview-of-computational-methods">Overview of Computational Methods</a></li>
+<li><a href="#3-the-hybrid-qmmm-potential">The Hybrid QM/MM Potential</a></li>
+<li><a href="#4-solving-the-qm-hamiltonian">Solving the QM Hamiltonian</a></li>
+<li><a href="#5-schemes-for-the-qmmm-hamiltonian">Schemes for the QM/MM Hamiltonian</a></li>
+<li><a href="#6-qmmm-coupling-embedding-schemes">QM/MM Coupling: Embedding Schemes</a></li>
+<li><a href="#7-electrostatic-embedding-in-detail">Electrostatic Embedding in Detail</a></li>
+<li><a href="#8-practical-issue-i-qm-region-and-method-selection">Practical Issue I: QM Region and Method Selection</a></li>
+<li><a href="#9-practical-issue-ii-qmmm-boundary-treatment">Practical Issue II: QM/MM Boundary Treatment</a></li>
+<li><a href="#10-practical-issue-iii-periodic-vs-non-periodic-boundary">Practical Issue III: Periodic vs. Non-Periodic Boundary</a></li>
+<li><a href="#11-free-energy-methods-combined-with-qmmm">Free Energy Methods Combined with QM/MM</a></li>
+<li><a href="#12-speed-and-parallelization">Speed and Parallelization</a></li>
+<li><a href="#13-speeding-up-ai-qmmm-multiscale-approach">Speeding up AI-QM/MM: Multiscale Approach</a></li>
+<li><a href="#14-summary-and-practical-recommendations">Summary and Practical Recommendations</a></li>
+</ol>
+<h2 id="1-motivation-why-qmmm">1. Motivation: Why QM/MM?<a class="headerlink" href="#1-motivation-why-qmmm" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Enzymes are extraordinarily efficient catalysts. A central goal in computational biochemistry is to understand <em>how</em> they achieve such remarkable rate enhancements. The Michaelis–Menten scheme captures the key steps:</p>
+<div class="arithmatex">\[E + S \underset{k_2}{\stackrel{k_1}{\rightleftharpoons}} ES \xrightarrow{k_\text{cat}} E + P\]</div>
+<p>The <strong>catalytic efficiency</strong> is defined as <span class="arithmatex">\(k_\text{cat}/k_\text{uncat}\)</span>, where <span class="arithmatex">\(k_\text{uncat}\)</span> is the rate of the uncatalyzed reaction. Some examples:</p>
+<table>
+<thead>
+<tr>
+<th>Enzyme</th>
+<th><span class="arithmatex">\(k_\text{cat}/k_\text{uncat}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OMP decarboxylase</td>
+<td><span class="arithmatex">\(\sim 10^{17}\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\beta\)</span>-Amylase</td>
+<td><span class="arithmatex">\(\sim 10^{17}\)</span></td>
+</tr>
+<tr>
+<td>Fumarase</td>
+<td><span class="arithmatex">\(\sim 10^{15}\)</span></td>
+</tr>
+<tr>
+<td>Carbonic anhydrase</td>
+<td><span class="arithmatex">\(\sim 10^{7}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Enzymes lower the activation free energy <span class="arithmatex">\(\Delta G_C\)</span> relative to the uncatalyzed barrier <span class="arithmatex">\(\Delta G_U\)</span>, shifting the transition state from <span class="arithmatex">\(E+S^\ddagger\)</span> to <span class="arithmatex">\(ES^\ddagger\)</span>.</p>
+<blockquote>
+<p><strong>Key question:</strong> What molecular interactions drive this rate enhancement? Answering this requires an atomistic description of bond breaking and formation — which purely classical force fields cannot provide.</p>
+</blockquote>
+<h2 id="2-overview-of-computational-methods">2. Overview of Computational Methods<a class="headerlink" href="#2-overview-of-computational-methods" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="21-potential-energy-functions">2.1 Potential Energy Functions<a class="headerlink" href="#21-potential-energy-functions" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Methods</th>
+<th>Cost scaling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Molecular Mechanics (MM)</td>
+<td>CHARMM, AMBER, MM2</td>
+<td><span class="arithmatex">\(\mathcal{O}(N \log N)\)</span> with PME</td>
+</tr>
+<tr>
+<td>Coarse-Grained (CG)</td>
+<td>Go-potential, Martini</td>
+<td>&lt; MM</td>
+</tr>
+<tr>
+<td>Semi-empirical QM</td>
+<td>AM1, PM3, SCC-DFTB, xTB, EVB</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^3)\)</span>, very fast</td>
+</tr>
+<tr>
+<td>DFT</td>
+<td>B3LYP, PBE, M06-2X</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^3)\)</span>–<span class="arithmatex">\(\mathcal{O}(N^4)\)</span></td>
+</tr>
+<tr>
+<td>Ab initio MO</td>
+<td>HF, MP2, CCSD(T), FCI</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^4)\)</span>–<span class="arithmatex">\(\mathcal{O}(N^7)\)</span></td>
+</tr>
+<tr>
+<td>Hybrid</td>
+<td>QM/MM, MM/CG, QM/MM/CG</td>
+<td>intermediate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relative cost:</strong> Full QM <span class="arithmatex">\(\gg\)</span> QM/MM <span class="arithmatex">\(\gg\)</span> MM <span class="arithmatex">\(&gt;\)</span> CG</p>
+<h3 id="22-statistical-simulation-methods">2.2 Statistical Simulation Methods<a class="headerlink" href="#22-statistical-simulation-methods" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li><strong>Molecular Dynamics (MD):</strong> Newtonian (Verlet, Velocity Verlet), Langevin, Car–Parrinello; ensembles NPT, NVT, NVE.</li>
+<li><strong>Monte Carlo:</strong> Metropolis method, Gibbs ensemble MC.</li>
+</ul>
+<h3 id="23-searching-the-potential-energy-surface">2.3 Searching the Potential Energy Surface<a class="headerlink" href="#23-searching-the-potential-energy-surface" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>Energy minimizations: steepest descent (SD), conjugate gradient (CG), Newton–Raphson (NR).</li>
+<li>Identification of reactant, transition state, and product configurations.</li>
+<li>Conformational search.</li>
+</ul>
+<h2 id="3-the-hybrid-qmmm-potential">3. The Hybrid QM/MM Potential<a class="headerlink" href="#3-the-hybrid-qmmm-potential" title="Anchor link to this section for reference">&para;</a></h2>
+<p>The central idea: treat the chemically active region with QM and the environment with the cheaper MM force field.</p>
+<ul>
+<li><strong>QM where needed</strong> — small reactive region.</li>
+<li><strong>Low cost</strong> — the QM region typically contains fewer than 200 atoms.</li>
+<li><strong>Bond formation/breaking</strong> is naturally described at the QM level.</li>
+</ul>
+<p>The effective Hamiltonian is partitioned as:</p>
+<div class="arithmatex">\[\hat{H}_\text{eff} = \hat{H}_\text{QM} + \hat{H}_\text{QM/MM} + \hat{H}_\text{MM}\]</div>
+<p>where the QM/MM coupling term is further decomposed into electrostatic, van der Waals, and boundary contributions:</p>
+<div class="arithmatex">\[\hat{H}_\text{QM/MM} = \hat{H}_\text{QM/MM}^\text{elec} + \hat{H}_\text{QM/MM}^\text{vdW} + \hat{H}_\text{QM/MM}^\text{boundary}\]</div>
+<ul>
+<li><span class="arithmatex">\(\hat{H}_\text{QM}\)</span>: full quantum mechanical Hamiltonian for the QM region.</li>
+<li><span class="arithmatex">\(\hat{H}_\text{MM}\)</span>: classical force field energy for the MM region.</li>
+</ul>
+<blockquote>
+<p><strong>Reference:</strong> Warshel &amp; Levitt, JMB (1976); Field, Bash &amp; Karplus, JCC (1990).</p>
+</blockquote>
+<h2 id="4-solving-the-qm-hamiltonian">4. Solving the QM Hamiltonian<a class="headerlink" href="#4-solving-the-qm-hamiltonian" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="41-the-full-electronic-problem">4.1 The Full Electronic Problem<a class="headerlink" href="#41-the-full-electronic-problem" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Under the <strong>Born–Oppenheimer approximation</strong>, nuclear and electronic motions are separated. The total QM wavefunction factorizes:</p>
+<div class="arithmatex">\[\Psi_\text{QM}^\text{tot}(\mathbf{r}^N, \mathbf{R}^M) = \Psi_\text{QM}^\text{nu}(\mathbf{R}^M)\,\Psi_\text{QM}^\text{elec}(\mathbf{r}^N; \mathbf{R}^M)\]</div>
+<p>The electronic Schrödinger equation is:</p>
+<div class="arithmatex">\[\hat{H}_\text{QM}^\text{elec}(\mathbf{r}^N; \mathbf{R}^M)\,\Psi_\text{QM}^\text{elec} = E_\text{QM}^\text{elec}(\mathbf{R}^M)\,\Psi_\text{QM}^\text{elec}\]</div>
+<p>with the electronic Hamiltonian (in atomic units):</p>
+<div class="arithmatex">\[\hat{H}_\text{QM}^\text{elec} = -\frac{1}{2}\sum_{i=1}^{N}\nabla_i^2 - \sum_{i=1}^{N}\sum_{A=1}^{M}\frac{Z_A}{r_{iA}} + \sum_{i=1}^{N}\sum_{j&gt;i}^{N}\frac{1}{r_{ij}}\]</div>
+<p>The total QM energy (including nuclear repulsion) is:</p>
+<div class="arithmatex">\[E_\text{QM}(\mathbf{R}^M) = \langle\Psi_\text{QM}^\text{elec}|\hat{H}_\text{QM}^\text{elec}|\Psi_\text{QM}^\text{elec}\rangle + \sum_{A=1}^{M}\sum_{B&gt;A}^{M}\frac{Z_A Z_B}{R_{AB}}\]</div>
+<h3 id="42-the-slater-determinant-and-lcao-mo">4.2 The Slater Determinant and LCAO-MO<a class="headerlink" href="#42-the-slater-determinant-and-lcao-mo" title="Anchor link to this section for reference">&para;</a></h3>
+<p>The many-electron wavefunction is approximated as a <strong>Slater determinant</strong> of molecular orbitals (MOs):</p>
+<div class="arithmatex">\[\Psi_\text{QM}^\text{elec} = \frac{1}{\sqrt{N!}}\begin{vmatrix} \phi_1(1) &amp; \phi_2(1) &amp; \cdots &amp; \phi_N(1) \\ \phi_1(2) &amp; \phi_2(2) &amp; \cdots &amp; \phi_N(2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \phi_1(N) &amp; \phi_2(N) &amp; \cdots &amp; \phi_N(N) \end{vmatrix}\]</div>
+<p>Each MO is expanded as a <strong>linear combination of atomic orbitals (LCAO)</strong> — the basis set:</p>
+<div class="arithmatex">\[\phi_i = \sum_{\mu} C_{i\mu}\,\chi_\mu\]</div>
+<h3 id="43-the-scf-procedure-hartreefock">4.3 The SCF Procedure (Hartree–Fock)<a class="headerlink" href="#43-the-scf-procedure-hartreefock" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Applying the variational principle,</p>
+<div class="arithmatex">\[E_\text{QM}^\text{trial} \geq E_\text{QM}^\text{exact}, \qquad \frac{\partial E_\text{QM}}{\partial C_{\mu i}} = 0\]</div>
+<p>leads to the <strong>Roothaan–Hall equations</strong>:</p>
+<div class="arithmatex">\[\mathbf{F}_\text{QM}^\text{elec}\,\mathbf{C} = \mathbf{S}\,\mathbf{C}\,\mathbf{E}_\text{QM}^\text{elec}\]</div>
+<p>where <span class="arithmatex">\(\mathbf{F}\)</span> is the Fock matrix, <span class="arithmatex">\(\mathbf{S}\)</span> is the overlap matrix, <span class="arithmatex">\(\mathbf{C}\)</span> is the matrix of MO coefficients, and <span class="arithmatex">\(\mathbf{E}\)</span> contains the MO energies. These are solved iteratively in the <strong>self-consistent field (SCF)</strong> cycle:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Input Geometry
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    → Compute electron integrals
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    → Initial density matrix
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    → Build Fock matrix
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    → Diagonalize Fock matrix
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    → Update density matrix
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    → Converged? → Exit
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>         ↑________________|  (SCF cycle)
+</span></code></pre></div>
+<h3 id="44-computational-scaling">4.4 Computational Scaling<a class="headerlink" href="#44-computational-scaling" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Scaling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MM with PME</td>
+<td><span class="arithmatex">\(\mathcal{O}(N \log N)\)</span></td>
+</tr>
+<tr>
+<td>HF / DFT</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^3)\)</span>–<span class="arithmatex">\(\mathcal{O}(N^4)\)</span></td>
+</tr>
+<tr>
+<td>MP2</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^5)\)</span></td>
+</tr>
+<tr>
+<td>CCSD(T)</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^7)\)</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-schemes-for-the-qmmm-hamiltonian">5. Schemes for the QM/MM Hamiltonian<a class="headerlink" href="#5-schemes-for-the-qmmm-hamiltonian" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Two strategies exist for combining QM and MM energies.</p>
+<h3 id="51-subtractive-scheme-eg-oniom">5.1 Subtractive Scheme (e.g., ONIOM)<a class="headerlink" href="#51-subtractive-scheme-eg-oniom" title="Anchor link to this section for reference">&para;</a></h3>
+<div class="arithmatex">\[E_\text{QM/MM} = E_\text{MM}(\text{whole}) + E_\text{QM}(\text{QM region}) - E_\text{MM}(\text{QM region})\]</div>
+<p>The QM region energy at the MM level is subtracted to avoid double counting.</p>
+<h3 id="52-additive-scheme">5.2 Additive Scheme<a class="headerlink" href="#52-additive-scheme" title="Anchor link to this section for reference">&para;</a></h3>
+<div class="arithmatex">\[E_\text{QM/MM} = E_\text{MM}(\text{MM region}) + E_\text{QM}(\text{QM region}) + E_\text{QM/MM}^\text{interaction}\]</div>
+<p>Here the MM region explicitly excludes the QM atoms, and the coupling term <span class="arithmatex">\(E_\text{QM/MM}^\text{interaction}\)</span> is computed explicitly.</p>
+<blockquote>
+<p>The <strong>additive scheme</strong> is more common in modern biomolecular QM/MM, since it allows the MM environment to polarize the QM density (electrostatic embedding).</p>
+</blockquote>
+<h2 id="6-qmmm-coupling-embedding-schemes">6. QM/MM Coupling: Embedding Schemes<a class="headerlink" href="#6-qmmm-coupling-embedding-schemes" title="Anchor link to this section for reference">&para;</a></h2>
+<p>How the QM/MM interaction is treated determines the accuracy and cost of the calculation.</p>
+<h3 id="61-mechanical-embedding">6.1 Mechanical Embedding<a class="headerlink" href="#61-mechanical-embedding" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>MM point charges do <strong>not</strong> polarize the QM electron density; the QM calculation is effectively done in vacuum.</li>
+<li>QM/MM electrostatics and vdW interactions are evaluated entirely at the MM level.</li>
+<li>Simple but can produce spurious effects (e.g., artificial hydrogen transfer).</li>
+</ul>
+<h3 id="62-electrostatic-embedding-most-common">6.2 Electrostatic Embedding <em>(most common)</em><a class="headerlink" href="#62-electrostatic-embedding-most-common" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>MM point charges are included directly in the QM Hamiltonian, polarizing the QM density.</li>
+<li>vdW interactions between QM and MM atoms are still handled at the MM level (require parameterization).</li>
+<li>Used in the vast majority of QM/MM implementations.</li>
+</ul>
+<h3 id="63-polarization-embedding">6.3 Polarization Embedding<a class="headerlink" href="#63-polarization-embedding" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>MM atoms carry polarizable dipoles; QM and MM charges are <strong>mutually polarized</strong>.</li>
+<li>Requires a double SCF (micro-iteration): converge both MM dipoles and QM density.</li>
+<li>Highest accuracy, highest cost.</li>
+</ul>
+<blockquote>
+<p><strong>References:</strong> Thiel et al., JPC (1996); Morokuma et al., JCTC (2006).</p>
+</blockquote>
+<h2 id="7-electrostatic-embedding-in-detail">7. Electrostatic Embedding in Detail<a class="headerlink" href="#7-electrostatic-embedding-in-detail" title="Anchor link to this section for reference">&para;</a></h2>
+<p>In the electrostatic embedding scheme the electronic Hamiltonian is augmented with the electrostatic potential of the MM charges <span class="arithmatex">\(\{q_M\}\)</span> at positions <span class="arithmatex">\(\mathbf{R}_{MM}\)</span>:</p>
+<div class="arithmatex">\[\hat{H}_\text{QM+QM/MM}^\text{elec} = \hat{H}_\text{QM}^\text{elec} - \sum_{i=1}^{N}\sum_{M=1}^{N_{MM}}\frac{q_M}{r_{iM}}\]</div>
+<p>The corresponding Schrödinger equation is:</p>
+<div class="arithmatex">\[\hat{H}_\text{QM+QM/MM}^\text{elec}(\mathbf{r}^N; \mathbf{R}^M, \mathbf{R}_{MM}^{N_{MM}})\,\Psi_\text{QM}^\text{elec} = E_\text{QM+QM/MM}^\text{elec}(\mathbf{R}^M, \mathbf{R}_{MM}^{N_{MM}})\,\Psi_\text{QM}^\text{elec}\]</div>
+<p>The total effective energy is:</p>
+<div class="arithmatex">\[E_\text{eff} = \langle\Psi_\text{QM}^\text{elec}|\hat{H}_\text{QM+QM/MM}^\text{elec}|\Psi_\text{QM}^\text{elec}\rangle + \sum_{A=1}^{M}\sum_{B&gt;A}^{M}\frac{Z_A Z_B}{R_{AB}} + \sum_{A=1}^{M}\sum_{M=1}^{N_{MM}}\frac{Z_A q_M}{R_{AM}} + E_\text{QM/MM}^\text{vdW} + E_\text{QM/MM}^\text{boundary} + E_\text{MM}\]</div>
+<p>The MM charges enter the Fock matrix build step of the SCF cycle, so the QM wavefunction self-consistently responds to the electrostatic environment.</p>
+<blockquote>
+<p><strong>Reference:</strong> Field, JCC (1990).</p>
+</blockquote>
+<h2 id="8-practical-issue-i-qm-region-and-method-selection">8. Practical Issue I: QM Region and Method Selection<a class="headerlink" href="#8-practical-issue-i-qm-region-and-method-selection" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="81-which-atoms-belong-in-the-qm-region">8.1 Which atoms belong in the QM region?<a class="headerlink" href="#81-which-atoms-belong-in-the-qm-region" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>At minimum: the substrate(s) and key catalytic residues directly involved in chemistry.</li>
+<li>For metal-containing enzymes: include metals and their first coordination shell.</li>
+<li>Typical QM region size: <strong>&lt; 200 atoms</strong>.</li>
+</ul>
+<h3 id="82-which-qm-method-and-basis-set">8.2 Which QM method and basis set?<a class="headerlink" href="#82-which-qm-method-and-basis-set" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Accuracy</th>
+<th>Speed</th>
+<th>Parallel efficiency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HF</td>
+<td>Poor</td>
+<td>Slow <span class="arithmatex">\(\mathcal{O}(N^4)\)</span></td>
+<td>Reasonable–Good</td>
+</tr>
+<tr>
+<td>DFT</td>
+<td>Good</td>
+<td>Slow <span class="arithmatex">\(\mathcal{O}(N^4)\)</span></td>
+<td>Reasonable–Good</td>
+</tr>
+<tr>
+<td>MP2</td>
+<td>Very good</td>
+<td>Very slow <span class="arithmatex">\(\mathcal{O}(N^5)\)</span></td>
+<td>Poor</td>
+</tr>
+<tr>
+<td>Semi-empirical (AM1, PM3, SCC-DFTB)</td>
+<td>System-dependent</td>
+<td>Very fast (<span class="arithmatex">\(\sim 10^3\times\)</span> HF/DFT)</td>
+<td>Good</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>For HF/DFT: use at least a <strong>6-31G(d)</strong> basis set; check for basis set convergence.</li>
+<li>SE-QM methods can be improved by reparameterization for specific systems.</li>
+</ul>
+<blockquote>
+<p><strong>Rule of thumb:</strong> The choice is driven by the required accuracy and total simulation cost. Most long QM/MM MD studies use semi-empirical QM; ab initio QM/MM is increasingly feasible for energy corrections.</p>
+</blockquote>
+<h2 id="9-practical-issue-ii-qmmm-boundary-treatment">9. Practical Issue II: QM/MM Boundary Treatment<a class="headerlink" href="#9-practical-issue-ii-qmmm-boundary-treatment" title="Anchor link to this section for reference">&para;</a></h2>
+<p>When the QM/MM boundary cuts through a covalent bond (common in proteins), the dangling valence on the QM side must be capped.</p>
+<h3 id="91-h-link-atom-approach">9.1 H-Link Atom Approach<a class="headerlink" href="#91-h-link-atom-approach" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>A hydrogen atom is placed along the broken bond to cap the QM region.</li>
+<li>Simple to implement; widely used.</li>
+<li>Care needed: the H-link atom should not interact with nearby MM charges.</li>
+</ul>
+<h3 id="92-double-link-atom-approach-brooks-et-al">9.2 Double-Link Atom Approach (Brooks et al.)<a class="headerlink" href="#92-double-link-atom-approach-brooks-et-al" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>Two link atoms are used (one in MM, one in QM).</li>
+<li>Gaussian smearing applied to MM atoms near the boundary to reduce overpolarization.</li>
+</ul>
+<h3 id="93-pseudo-bond-method">9.3 Pseudo-Bond Method<a class="headerlink" href="#93-pseudo-bond-method" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>The boundary C–C bond is replaced by a pseudo-atom with optimized parameters.</li>
+<li>Yang and coworkers: DFT-based parameterization.</li>
+<li>Thiel and coworkers: connection bond for SE-QM methods.</li>
+</ul>
+<h3 id="94-local-self-consistent-field-lscf-method-rivail-et-al">9.4 Local Self-Consistent Field (LSCF) Method (Rivail et al.)<a class="headerlink" href="#94-local-self-consistent-field-lscf-method-rivail-et-al" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>A frozen localized orbital spans the QM/MM boundary.</li>
+<li>Difficult to implement; transferability is not guaranteed.</li>
+</ul>
+<h3 id="95-generalized-hybrid-orbital-gho-method-gao-et-al">9.5 Generalized Hybrid Orbital (GHO) Method (Gao et al.)<a class="headerlink" href="#95-generalized-hybrid-orbital-gho-method-gao-et-al" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>The boundary MM atom carries hybrid orbitals; one &ldquo;active&rdquo; orbital enters the QM calculation.</li>
+<li>Primarily designed for SE-QM methods.</li>
+</ul>
+<h3 id="96-frozen-orbital-approximation-friesner-et-al">9.6 Frozen Orbital Approximation (Friesner et al.)<a class="headerlink" href="#96-frozen-orbital-approximation-friesner-et-al" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>A pre-optimized frozen orbital caps the QM region.</li>
+<li>Implemented in Schrödinger&rsquo;s QSite/Jaguar.</li>
+</ul>
+<blockquote>
+<p><strong>Practical advice:</strong> Always cut along a <strong>C–C single bond</strong>, at least several bonds away from the chemically active region. Be aware of polarization artifacts near the cutting bond, especially with the H-link approach.</p>
+</blockquote>
+<h2 id="10-practical-issue-iii-periodic-vs-non-periodic-boundary">10. Practical Issue III: Periodic vs. Non-Periodic Boundary<a class="headerlink" href="#10-practical-issue-iii-periodic-vs-non-periodic-boundary" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="101-the-problem">10.1 The Problem<a class="headerlink" href="#101-the-problem" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Most enzyme QM/MM simulations are solvated in a periodic box. Long-range electrostatics must be handled consistently across QM, QM/MM, and MM regions.</p>
+<ul>
+<li>Most QM/MM implementations historically used a <strong>cutoff</strong> or <strong>no-cutoff</strong> scheme under stochastic boundary conditions — which introduces artifacts.</li>
+</ul>
+<h3 id="102-qmmm-with-particle-mesh-ewald-pme">10.2 QM/MM with Particle Mesh Ewald (PME)<a class="headerlink" href="#102-qmmm-with-particle-mesh-ewald-pme" title="Anchor link to this section for reference">&para;</a></h3>
+<p>A rigorous extension of PME to QM/MM partitions the total energy as:</p>
+<div class="arithmatex">\[E_\text{tot}^\text{PME} = E_\text{QM}^\text{RS}[\rho] + E_\text{QM/MM}^\text{RS}[\rho] + \Delta E_\text{QM}^\text{PME}[Q] + E_\text{MM}^\text{PME}[q]\]</div>
+<p>where RS denotes a real-space short-range contribution and <span class="arithmatex">\(Q\)</span>, <span class="arithmatex">\(q\)</span> are QM multipole and MM charges, respectively.</p>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Full PBC with no cutoff artifacts.</li>
+<li>Balanced treatment of QM, QM/MM, and MM long-range electrostatics.</li>
+<li>Produces stable MD trajectories.</li>
+<li>Available in CHARMM, AMBER, Q-Chem, and others.</li>
+</ul>
+<blockquote>
+<p><strong>References:</strong> Nam, JCTC (2005, 2014). Alternative formulations include ambient-potential composite Ewald (York et al.), multipole moments (Rothlisberger et al.), ESP/ChElPG charges (Herbert et al.), Gen-Ew (Thiel et al.), and augmented charges (Shao et al.).</p>
+</blockquote>
+<h2 id="11-free-energy-methods-combined-with-qmmm">11. Free Energy Methods Combined with QM/MM<a class="headerlink" href="#11-free-energy-methods-combined-with-qmmm" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Converged free energy calculations require <strong>&gt; 1 ns of QM/MM MD</strong>, which is only feasible with efficient SE-QM/MM methods.</p>
+<h3 id="111-potential-of-mean-force-pmf-by-umbrella-sampling">11.1 Potential of Mean Force (PMF) by Umbrella Sampling<a class="headerlink" href="#111-potential-of-mean-force-pmf-by-umbrella-sampling" title="Anchor link to this section for reference">&para;</a></h3>
+<p>The reaction free energy along a distinguished coordinate <span class="arithmatex">\(z\)</span> (e.g., <span class="arithmatex">\(r_{AH} - r_{HB}\)</span> for a proton transfer):</p>
+<div class="arithmatex">\[W_{CM}(z) = -RT\ln\rho(z) + C\]</div>
+<p>where <span class="arithmatex">\(\rho(z)\)</span> is the probability density sampled along <span class="arithmatex">\(z\)</span>, and <span class="arithmatex">\(C\)</span> is a constant. Harmonic bias potentials (&ldquo;umbrella&rdquo; windows) are applied to sample the full range of <span class="arithmatex">\(z\)</span>; WHAM or similar methods then reconstruct the unbiased PMF.</p>
+<h3 id="112-alchemical-free-energy-by-thermodynamic-integration">11.2 Alchemical Free Energy by Thermodynamic Integration<a class="headerlink" href="#112-alchemical-free-energy-by-thermodynamic-integration" title="Anchor link to this section for reference">&para;</a></h3>
+<p>For processes such as solvation free energies or pKa calculations, a coupling parameter <span class="arithmatex">\(\lambda\)</span> interpolates between states A and B:</p>
+<div class="arithmatex">\[\Delta G_{A \to B} = \int_{\lambda'=0}^{\lambda'=1}\left.\frac{\partial G}{\partial\lambda}\right|_{\lambda'}\!d\lambda' = \int_{\lambda'=0}^{\lambda'=1}\left\langle\frac{dH(\lambda)}{d\lambda}\right\rangle_{\!\lambda'}\!d\lambda'\]</div>
+<h3 id="113-path-based-methods">11.3 Path-Based Methods<a class="headerlink" href="#113-path-based-methods" title="Anchor link to this section for reference">&para;</a></h3>
+<p>The finite temperature string method optimizes a reaction pathway <span class="arithmatex">\(\alpha\)</span> in a collective variable space:</p>
+<div class="arithmatex">\[F_{\alpha^*} - F_0 = \int_0^{\alpha^*}\sum_{j=1}^{N}\frac{\partial F}{\partial\theta_j^*}\cdot\frac{d\theta_j^*}{d\alpha}\,d\alpha\]</div>
+<h2 id="12-speed-and-parallelization">12. Speed and Parallelization<a class="headerlink" href="#12-speed-and-parallelization" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="121-typical-simulation-speeds">12.1 Typical Simulation Speeds<a class="headerlink" href="#121-typical-simulation-speeds" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MM (GPU)</td>
+<td><span class="arithmatex">\(\sim 100\)</span> ns/day</td>
+</tr>
+<tr>
+<td>MM (CPU)</td>
+<td><span class="arithmatex">\(\sim 40\)</span> ns/day</td>
+</tr>
+<tr>
+<td>SE-QM/MM</td>
+<td><span class="arithmatex">\(\sim 0.2\)</span> ns/day</td>
+</tr>
+<tr>
+<td>AI-QM/MM</td>
+<td><span class="arithmatex">\(\sim 0.001\)</span> ns/day</td>
+</tr>
+</tbody>
+</table>
+<p>Since free energy convergence requires &gt; 1 ns, <strong>SE-QM/MM is currently the practical workhorse</strong> for QM/MM free energy calculations.</p>
+<blockquote>
+<p><strong>References:</strong> Nam, JCTC (2013, 2014); Ojeda-May, JCTC (2017).</p>
+</blockquote>
+<h3 id="122-bottlenecks-in-se-qmmm">12.2 Bottlenecks in SE-QM/MM<a class="headerlink" href="#122-bottlenecks-in-se-qmmm" title="Anchor link to this section for reference">&para;</a></h3>
+<p>The two dominant costs are:</p>
+<p><strong>1. SCF iteration — Fock matrix diagonalization, <span class="arithmatex">\(\mathcal{O}(N^3)\)</span></strong></p>
+<p>Accelerators to reduce the number of SCF iterations:</p>
+<ul>
+<li><strong>DIIS</strong> (Direct Inversion in the Iterative Subspace)</li>
+<li><strong>DXL-BOMD</strong> (Extended Lagrangian Born–Oppenheimer MD with dissipation): an auxiliary density matrix <span class="arithmatex">\(\mathbf{P}\)</span> is propagated as a dynamical variable:</li>
+</ul>
+<div class="arithmatex">\[\mathbf{P}(t+\delta t) = 2\mathbf{P}(t) - \mathbf{P}(t-\delta t) + \delta t^2\,\varpi^2\left[\mathbf{D}(t) - \mathbf{P}(t)\right]\]</div>
+<ul>
+<li><strong>ELMD</strong> (Extended Lagrangian MD): treats density matrix elements as dynamical variables satisfying the idempotency condition <span class="arithmatex">\(\mathbf{PP} = \mathbf{P}\)</span>; highly parallelizable.</li>
+</ul>
+<p>ELMD Lagrangian:</p>
+<div class="arithmatex">\[L = L_\text{QM/MM} + \frac{1}{2}m_P\sum_{i&lt;j}\left(\frac{dP_{ij}}{dt}\right)^2 - \text{Tr}\left[\Lambda(\mathbf{PP}-\mathbf{P})\right]\]</div>
+<blockquote>
+<p><strong>References:</strong> Niklasson, JCP (2009); Schlegel et al., JCP (2001); Herbert &amp; Head-Gordon, JCP (2004); Nam, JCTC (2013); Ojeda-May et al., JCTC (2017).</p>
+</blockquote>
+<p><strong>2. Long-range QM/MM electrostatics — handled via QM/MM-PME</strong> (see Section 10.2).</p>
+<h2 id="13-speeding-up-ai-qmmm-multiscale-approach">13. Speeding up AI-QM/MM: Multiscale Approach<a class="headerlink" href="#13-speeding-up-ai-qmmm-multiscale-approach" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Ab initio QM/MM (AI-QM/MM) is up to 100,000× slower than MM. A two-level approach decomposes the total energy:</p>
+<div class="arithmatex">\[E_\text{tot} = E_\text{AI-QM/MM-PME}(\rho:\text{MM}^\text{PBC})\]</div>
+<div class="arithmatex">\[\approx E_\text{SE-QM/MM-PME}(\rho:\text{MM}^\text{PBC}) + \left[E_\text{AI-QM/MM}(\rho:\text{MM}^\text{RS}) - E_\text{SE-QM/MM}(\rho:\text{MM}^\text{RS})\right]\]</div>
+<p><strong>Strategy:</strong></p>
+<ul>
+<li>Long-range electrostatics are handled at the inexpensive SE-QM/MM level with full PBC/PME.</li>
+<li>The AI-QM/MM correction (short-range) is applied less frequently using the <strong>rRESPA multiple time step algorithm</strong> — analogous to the ONIOM energy interpolation.</li>
+</ul>
+<p>This reduces the AI-QM/MM cost by roughly an order of magnitude without sacrificing accuracy for the chemically important region.</p>
+<blockquote>
+<p><strong>Reference:</strong> Nam, JCTC (2014).</p>
+</blockquote>
+<h2 id="14-summary-and-practical-recommendations">14. Summary and Practical Recommendations<a class="headerlink" href="#14-summary-and-practical-recommendations" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="qm-region-and-method">QM Region and Method<a class="headerlink" href="#qm-region-and-method" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>QM/MM is <strong>not a black box</strong>: apply chemical knowledge of the reaction mechanism.</li>
+<li>Transition metals are particularly challenging — be cautious with method and region selection.</li>
+<li>Choose between DFT and semi-empirical QM based on the required accuracy and timescale.</li>
+<li>Expect to reparameterize vdW parameters for SE-QM atoms.</li>
+<li>A larger QM region is not always better: check basis set convergence and theory-level limitations.</li>
+<li>Most X-ray structures lack natural substrates — substrate placement via modeling or docking is often required.</li>
+</ul>
+<h3 id="qmmm-boundary">QM/MM Boundary<a class="headerlink" href="#qmmm-boundary" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>Always cut along a <strong>C–C single bond</strong>, at least several bonds away from the reactive site.</li>
+<li>Be aware of polarization artifacts near the cutting bond, especially with the H-link approach.</li>
+<li>Several boundary methods exist; the choice depends on the QM level and available software.</li>
+</ul>
+<h3 id="periodic-boundary-conditions">Periodic Boundary Conditions<a class="headerlink" href="#periodic-boundary-conditions" title="Anchor link to this section for reference">&para;</a></h3>
+<ul>
+<li>Use <strong>PBC with PME</strong> whenever possible — not all QM packages or theories support this.</li>
+<li>If PBC is unavailable, use <strong>no-cutoff</strong> for both QM/MM and MM interactions.</li>
+<li>Do <strong>not</strong> mix cutoff for MM with no-cutoff for QM/MM interactions.</li>
+</ul>
+<h2 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Anchor link to this section for reference">&para;</a></h2>
+<ul>
+<li>Warshel &amp; Levitt (1976) – Original QM/MM formulation</li>
+<li>Field, Bash &amp; Karplus (1990) – Modern QM/MM implementation</li>
+<li>Senn &amp; Thiel (2009) – QM/MM methods review</li>
+<li>van der Kamp &amp; Mulholland (2013) – Biomolecular QM/MM applications</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../vmd/" class="btn btn-neutral float-left" title="Analyzing simulations"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../qmmm-gaussianorca/" class="btn btn-neutral float-right" title="GAUSSIAN/ORCA">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../vmd/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../qmmm-gaussianorca/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../assets/_markdown_exec_pyodide.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/open_in_new_tab.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

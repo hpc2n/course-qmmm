@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://hpc2n.github.io/course-qmmm/qmmm-gaussianorca/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>GAUSSIAN/ORCA - QM/MM - best practices</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_markdown_exec_pyodide.css" rel="stylesheet" />
+        <link href="../assets/_markdown_exec_ansi.css" rel="stylesheet" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "GAUSSIAN/ORCA";
+        var mkdocs_page_input_path = "qmmm-gaussianorca.md";
+        var mkdocs_page_url = "/course-qmmm/qmmm-gaussianorca/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../images/hpc2n-qmmm.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../intro.md">Introduction</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Classical MD simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../classical/">Basic concepts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../namd.md">Running simulations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../vmd/">Analyzing simulations</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../quantum/">Basic concepts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">QM/MM simulations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">GAUSSIAN/ORCA</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../summary.md">Summary</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">QM/MM - best practices</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">QM/MM simulations</li>
+      <li class="breadcrumb-item active">GAUSSIAN/ORCA</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <ul>
+<li>
+<p>Assuming you are in the folder MD_QM-NAMD_ORCA, open VMD on the
+GUI and go to Extensions -&gt; Simulation -&gt; QwikMD
+The first time VMD will ask you if you want to create the folder for QwikMD,
+say OK.</p>
+</li>
+<li>
+<p>In the <em>Browser</em> option from QwikMD type 1QRA and then <em>Load</em>. Accept the
+automatic Atom Renaming. You will also see warnings from <em>Structure Manipulation/Check</em>, 
+close this box for now (<em>OK</em>) we will deal with parameters later.</p>
+</li>
+<li>
+<p>Go to <em>Chain/Type Selection</em> and click on the <em>A and water</em> option to
+disable it.</p>
+</li>
+<li>
+<p>Then, in the <em>Structure Manipulation/Check</em> you will see the residues that
+are included in your current system. The important point here is the option
+<em>Topologies &amp; Parameters</em>, if you click on it it will tell you that the residue
+167 is missing some parameters for GTP. Go to the option <em>Add Topo+Param</em> 
+and click on the symbol <em>+</em>. In the box <em>File name</em> write the complete path 
+to the folder where the file <em>toppar_all36_na_nad_ppi_gdp_gtp.str</em> is located.
+Here, you change the type of GTP to <em>hetero</em> and click on <em>Apply</em>. </p>
+</li>
+<li>
+<p>You will see a box saying that parameters for the new residue will be added
+to the library, say &ldquo;Yes&rdquo;. Say OK to the message box &ldquo;Topology Added&rdquo;.</p>
+</li>
+<li>
+<p>Close the windows for QwikMD, to reset the defaults. </p>
+</li>
+<li>
+<p>In the VMD main window go again to Extensions -&gt; Simulation -&gt; QwikMD</p>
+</li>
+<li>
+<p>In the <em>Browser</em> option from QwikMD type 1QRA and then <em>Load</em>. Accept the
+automatic Atom Renaming. Now there shouldn&rsquo;t be any comments related to
+<em>Structure Manipulation/Check</em>.</p>
+</li>
+<li>
+<p>Go to <em>Chain/Type Selection</em> and click on the <em>A and water</em> option to
+disable it.</p>
+</li>
+<li>
+<p>In the main option of QwikMD called <em>Advanced Run</em>, choose the <em>MD</em> option.
+Here, choose <em>Solvent=Explicit</em>, <em>Minimal Box</em>, <em>Buffer=12A</em>, <em>Salt conc.=0.15mol/L</em>,
+<em>Choose Salt=NaCl</em>.</p>
+</li>
+<li>
+<p>In <em>Protocol</em>, click on <em>MD</em> and then on the symbol <em>-</em> to remove this option.
+Select <em>Annealing</em> line and change the <em>n Steps</em> value to 12000, and the value of
+<em>Equilibration</em> <em>n Steps</em> to 50000.</p>
+</li>
+<li>
+<p>In the option <em>Simulation Setup</em>, click on <em>Save</em>. Write the name for the folder
+which will contain the files related to the system, here we will write &ldquo;mdsim&rdquo; (save the
+changes). Then, click on <em>Prepare</em> to save all required files. </p>
+</li>
+<li>
+<p>Close VMD</p>
+</li>
+<li>
+<p>Copy the script <em>namd.sh</em> to the folder <em>mdsim/run</em>, move to this directory
+and submit your script <em>sbatch namd.sh</em> (after fixing the project ID and reservation).
+When the simulation finishes, you can
+take a look at the equilibration trajectory <em>vmd mdsim_QwikMD.psf Equilibration.dcd</em>.</p>
+</li>
+<li>
+<p>Return to the director MD_QM-NAMD_ORCA ( cd ../.. ) and open VMD. Then,
+Extensions -&gt; Simulation -&gt; QwikMD</p>
+</li>
+<li>
+<p>In the box <em>Load</em> of <em>Simulation setup</em> section, select the file <em>mdsim.qwikmd</em> and open it.
+A message box will ask you what trajectory(ies) you want to load. Choose only <em>Equilibration</em>
+and then click on <em>Load Simulations Last Step</em>. </p>
+</li>
+<li>
+<p>Select now the <em>QM/MM</em> option in <em>Advanced Run</em>. </p>
+<ul>
+<li>For <em>Protocol</em>, set the number of Minimization steps to 3, Annealing to 3, 
+ Equilibration to 100 and QMMM steps to 5000. </li>
+<li>In <em>QM Regions</em>, go to <em>+</em> symbol to generate a QM selection. Click on that line
+  (which contains 1   0  0  1  none) and see that the color becomes blue. 
+  Then, select the column <em>n Atoms</em> to display the residues.
+ In <em>Atom Selection</em> write <em>resname GTP MG or segname AP1 and resid 16</em>,
+ which will give you a total charge of -1 for the QM region. Set <em>Solvent selection</em>
+ to 0A.  <em>Apply</em> the changes. A total of 67 atoms will be treated quantum mechanically.</li>
+</ul>
+</li>
+<li>
+<p>For <em>QM Options</em>, select <em>Set Path</em> and type:</p>
+</li>
+</ul>
+<p><code>/software/sse2/el9_epyc9005/easybuild/prefix/software/ORCA/6.1.1-gompi-2025b-avx2/bin/orca</code></p>
+<p>in the file name line.</p>
+<ul>
+<li>
+<p>In the <em>QM Command</em> box, delete <em>Grid4</em> and change <em>TightSCF</em> to <em>NOSOSCF</em>.</p>
+</li>
+<li>
+<p>In <em>Simulation Setup</em> write the name of the .qwikmd file (qmsim.qwikmd in the present case):
+Click on <em>Prepare</em> and choose <em>Current Frame</em>.</p>
+</li>
+<li>
+<p>Close VMD and move to the folder qmsim/run. </p>
+</li>
+<li>
+<p>In this folder, add the following line in the <em>conf</em> files in the QM related section:</p>
+</li>
+</ul>
+<p>qmConfigLine &ldquo;%PAL NPROCS 10 END&rdquo;</p>
+<p>for instance below the line <em>qmConfigLine &ldquo;!EnGrad NOSOSCF&rdquo;</em>, to run on 10 cores in parallel mode.</p>
+<ul>
+<li>Copy the batch job for qm simulations to this current folder (<em>cp ../../namd_qmmm.sh</em>)
+and submit the jobs with <em>sbatch namd_qmmm.sh</em> (change the project ID).</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">#SBATCH -A naiss2026-3-418-cpu </span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1">#SBATCH -J namdjob                             </span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1">#SBATCH -t 02:50:00                            </span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">#SBATCH -p cpu                                 </span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1">#SBATCH -N 1</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">#SBATCH -n 14</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># load the NAMD module                         </span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>ml<span class="w"> </span>purge
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>ml<span class="w"> </span>ORCA/6.1.1-avx2
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>ml<span class="w"> </span>buildtool-easybuild/5.2.1-hpca3ef7d197<span class="w"> </span>NAMD/3.0.2-multicore
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>namd3<span class="w"> </span>+p4<span class="w"> </span>QMMM-Min.conf<span class="w">   </span>&gt;<span class="w"> </span>output_minimization.dat
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1">#/software/sse2/el9_epyc9005/easybuild/prefix/software/ORCA/6.1.1-gompi-2025b-avx2/bin/orca /nobackup/proj/disk/support_staff/personal/pojedama/ORCA-NAMD/qmsim/run/qmmm_exec/QMMM-Min/0/qmmm_0.input</span>
+</span></code></pre></div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../quantum/" class="btn btn-neutral float-left" title="Basic concepts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../quantum/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../assets/_markdown_exec_pyodide.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/open_in_new_tab.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
