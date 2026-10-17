@@ -35,13 +35,15 @@ nav:
   - Introduction: intro.md
   - Classical MD simulations:
     - Basic concepts: classical.md
-    - Running simulations: namd.md  
-    - Analyzing simulations: vmd.md  
-  - QM simulations: 
-    - Basic concepts: quantum.md
-  - QM/MM simulations: 
-    - GAUSSIAN/ORCA: qmmm-gaussianorca.md
-  - Summary: summary.md
+  - Machine Learning:
+    - Machine learning potentials: mlp.md
+#    - Running simulations: namd.md  
+#    - Analyzing simulations: vmd.md  
+#  - QM simulations: 
+#    - Basic concepts: quantum.md
+#  - QM/MM simulations: 
+#    - GAUSSIAN/ORCA: qmmm-gaussianorca.md
+#  - Summary: summary.md
 plugins:
   - search
   - external-markdown
