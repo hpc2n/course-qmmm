@@ -1,4 +1,4 @@
-# QM/MM - best practices
+# Molecular Simulations
 
 The aim of this ONLINE course is to give an intro to classical Molecular Dynamics 
 (MD) simulations and the combined Quantum Mechanical and Molecular Mechanics (QM/MM)

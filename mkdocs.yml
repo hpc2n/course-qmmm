@@ -1,6 +1,6 @@
-site_name: QM/MM - best practices
+site_name: Molecular Simulations
 site_url: https://hpc2n.github.io/course-qmmm
-site_description: Material for the course QM/MM - best practices
+site_description: Material for the course Molecular Simulations
 site_dir: site.build
 theme:
   name: readthedocs
