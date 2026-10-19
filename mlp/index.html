@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://hpc2n.github.io/course-qmmm/mlp/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Machine learning potentials - Molecular Simulations</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_markdown_exec_pyodide.css" rel="stylesheet" />
+        <link href="../assets/_markdown_exec_ansi.css" rel="stylesheet" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Machine learning potentials";
+        var mkdocs_page_input_path = "mlp.md";
+        var mkdocs_page_url = "/course-qmmm/mlp/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../images/hpc2n-qmmm.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="../intro.md">Introduction</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Classical MD simulations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../classical/">Basic concepts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Machine Learning</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Machine learning potentials</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#from-analytical-force-fields-to-learned-potential-energy-surfaces">From analytical force fields to learned potential-energy surfaces</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#locality-and-atomic-environments">Locality and atomic environments</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ani-as-an-introduction-to-ml-potentials">ANI as an introduction to ML potentials</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mace-for-mineral-systems">MACE for mineral systems</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#training-our-own-mineral-ml-potential">Training our own mineral ML potential</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#training-is-still-force-field-fitting">Training is still force-field fitting</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-extrapolation-problem">The extrapolation problem</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#connecting-an-ml-potential-to-gromacs">Connecting an ML potential to GROMACS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#torchscript-as-the-interface">TorchScript as the interface</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#neighbor-lists-and-gromacs-2026">Neighbor lists and GROMACS 2026</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#machine-learning-potentials-in-lammps">Machine-learning potentials in LAMMPS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#full-ml-versus-hybrid-simulations">Full ML versus hybrid simulations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-particular-problem-of-electrostatics-in-minerals">The particular problem of electrostatics in minerals</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#validation-think-like-a-force-field-developer">Validation: think like a force-field developer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#classical-force-fields-and-ml-potentials-are-complementary">Classical force fields and ML potentials are complementary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#a-practical-workflow-for-mineral-systems">A practical workflow for mineral systems</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#final-perspective">Final perspective</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#software-documentation">Software documentation</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Molecular Simulations</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Machine Learning</li>
+      <li class="breadcrumb-item active">Machine learning potentials</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="from-classical-force-fields-to-machine-learning-potentials">From Classical Force Fields to Machine-Learning Potentials<a class="headerlink" href="#from-classical-force-fields-to-machine-learning-potentials" title="Anchor link to this section for reference">&para;</a></h1>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Molecular dynamics simulations of minerals, mineral–water interfaces, Biomolecules, and electrolyte solutions have traditionally relied on classical force fields. 
+These force fields have been extremely successful because they allow us to simulate systems containing hundreds of thousands or even millions of 
+atoms over relatively long time scales.</p>
+<p>For a classical force-field developer, the potential energy is normally written as a sum of physically motivated analytical contributions, schematically,</p>
+<div class="arithmatex">\[
+E_{\mathrm{FF}}=E_{\mathrm{bonded}}+E_{\mathrm{vdW}}+E_{\mathrm{Coulomb}}.
+\]</div>
+<p>The electrostatic contribution, for example, is commonly represented by Coulomb interactions,</p>
+<div class="arithmatex">\[
+E_{\mathrm{Coulomb}}=\sum_{i&lt;j}\frac{q_iq_j}{4\pi\epsilon_0 r_{ij}},
+\]</div>
+<p>For periodic ionic systems, this pair expression requires an appropriate periodic electrostatic summation rather than a simple finite sum.</p>
+<p>Short-range dispersion and repulsion can be represented by a Lennard-Jones potential,</p>
+<div class="arithmatex">\[
+E_{\mathrm{LJ}}=\sum_{i&lt;j}4\epsilon_{ij}\left[\left(\frac{\sigma_{ij}}{r_{ij}}\right)^{12}-\left(\frac{\sigma_{ij}}{r_{ij}}\right)^6\right].
+\]</div>
+<p>For mineral systems, one may additionally introduce harmonic bonds, angle terms, Buckingham potentials, polarization models, three-body terms, or other 
+specialized interactions.</p>
+<p>The important characteristic of this approach is that <strong>we choose the mathematical form of the potential before fitting it</strong>. Force-field development 
+then consists largely of determining appropriate parameters such as charges, equilibrium distances, force constants, and van der Waals parameters.</p>
+<p>Machine-learning potentials change this philosophy. Instead of asking:</p>
+<blockquote>
+<p>What analytical potential should I use to represent an Fe–O or Si–O interaction?</p>
+</blockquote>
+<p>one can ask:</p>
+<blockquote>
+<p>Can we learn the potential-energy surface directly from electronic-structure calculations?</p>
+</blockquote>
+<p>This is the central idea behind machine-learning interatomic potentials.</p>
+<h2 id="from-analytical-force-fields-to-learned-potential-energy-surfaces">From analytical force fields to learned potential-energy surfaces<a class="headerlink" href="#from-analytical-force-fields-to-learned-potential-energy-surfaces" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Consider a system containing <span class="arithmatex">\(N\)</span> atoms. One can describe the configuration using the atomic coordinates
+<span class="arithmatex">\(\mathbf R =\{\mathbf r_1,\mathbf r_2,\ldots,\mathbf r_N\},\)</span> the atomic numbers <span class="arithmatex">\(\mathbf Z =\{Z_1,Z_2,\ldots,Z_N\},\)</span>
+and, for a periodic system, the simulation-cell matrix <span class="arithmatex">\(\mathbf H.\)</span></p>
+<p>An ML potential attempts to construct a function <span class="arithmatex">\(E_\theta=E_\theta(\mathbf R,\mathbf Z,\mathbf H),\)</span>
+where <span class="arithmatex">\(\theta\)</span> represents the parameters of the neural network or another machine-learning model.</p>
+<p>We train these parameters using quantum-mechanical reference calculations. Ideally,</p>
+<div class="arithmatex">\[
+E_\theta(\mathbf R)\approx E_{\mathrm{DFT}}(\mathbf R).
+\]</div>
+<p>But energies alone are generally not sufficient for molecular dynamics. We also want the potential-energy 
+surface to have the correct derivatives. The force acting on atom <span class="arithmatex">\(i\)</span> is</p>
+<div class="arithmatex">\[
+\mathbf F_i=-\frac{\partial E}{\partial\mathbf r_i}.
+\]</div>
+<p>Therefore, a useful ML potential should satisfy</p>
+<div class="arithmatex">\[
+-\frac{\partial E_\theta}{\partial\mathbf r_i}\approx \mathbf F_i^{\mathrm{DFT}}.
+\]</div>
+<p>This is particularly important for molecular dynamics because the forces, rather than the absolute energies, 
+determine the evolution of the atomic coordinates. In this sense, an ML potential is still a force field. 
+What changes is the representation of the potential-energy surface.</p>
+<h2 id="locality-and-atomic-environments">Locality and atomic environments<a class="headerlink" href="#locality-and-atomic-environments" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Many modern ML potentials make an important approximation: the total energy can be decomposed into atomic contributions,</p>
+<div class="arithmatex">\[
+E_{\mathrm{ML}}=\sum_{i=1}^{N} E_i.
+\]</div>
+<p>The energy assigned to atom <span class="arithmatex">\(i\)</span> depends on its local atomic environment,</p>
+<div class="arithmatex">\[
+E_i =f_\theta(\mathcal N_i),
+\]</div>
+<p>where the neighborhood can be defined as</p>
+<div class="arithmatex">\[
+\mathcal N_i=\left\{j\ne i: r_{ij}&lt;r_c\right\}.
+\]</div>
+<p>Here <span class="arithmatex">\(r_c\)</span> is the cutoff radius. The model uses the neighbors&rsquo; species and relative positions, not just their indices; periodic images must also be 
+included where appropriate. Message-passing models can have an effective receptive field extending over several neighbor hops.</p>
+<p>This construction has several useful properties. It makes the computational cost approximately linear with system size at fixed density, cutoff, and model 
+complexity, allows models trained on relatively small configurations to be applied to larger systems, and naturally represents local chemical environments.</p>
+<p>For a mineral, the network may therefore encounter environments such as</p>
+<div class="arithmatex">\[
+\mathrm{Si-O-Si},
+\qquad
+\mathrm{Si-O-Al},
+\qquad
+\mathrm{Fe-O},
+\qquad
+\mathrm{Al-OH},
+\qquad
+\mathrm{Na-O_{water}},
+\]</div>
+<p>without us explicitly writing separate analytical terms for each one.</p>
+<p>The network learns how those environments contribute to the energy from the training data.</p>
+<p>This does <strong>not</strong>, however, mean that all physics is automatically learned correctly. Long-range electrostatics, for example, deserves special attention in 
+mineral systems, as we will discuss later.</p>
+<h2 id="ani-as-an-introduction-to-ml-potentials">ANI as an introduction to ML potentials<a class="headerlink" href="#ani-as-an-introduction-to-ml-potentials" title="Anchor link to this section for reference">&para;</a></h2>
+<p>ANI (Accurate NeurAl networK engINe for Molecular Energies) provides a relatively intuitive example of an ML potential
+[Chem. Sci. (2017) 8 (4): 3192–3203; J. Chem. Theory Comput. (2020) 16 (7): 4192–4202].</p>
+<p>ANI represents the environment around each atom using descriptors traditionally called atomic environment vectors. These descriptors encode radial and angular
+information about neighboring atoms. Conceptually, we can write</p>
+<div class="arithmatex">\[
+E =\sum_i NN_{Z_i}(G_i),
+\]</div>
+<p>where <span class="arithmatex">\(G_i\)</span> describes the environment around atom <span class="arithmatex">\(i\)</span>, and <span class="arithmatex">\(NN_{Z_i}\)</span> is a neural network associated with its chemical element.</p>
+<p>ANI is particularly convenient as an introduction to GROMACS machine-learning potentials because TorchANI is based on PyTorch, and ANI models can be packaged as
+TorchScript models.</p>
+<p>For example, ANI-2x can be wrapped so that GROMACS provides coordinates and atomic numbers, the wrapper converts the units expected by ANI, and the network 
+returns an energy.</p>
+<p>However, ANI-2x has an extremely important limitation for our application.</p>
+<p>Its supported elements are <span class="arithmatex">\(\mathrm{H,\ C,\ N,\ O,\ F,\ S,\ Cl}\)</span>; see the <a href="https://aiqm.github.io/torchani/api_autogen/torchani.utils.html">TorchANI element definitions</a>.</p>
+<p>This chemical space is appropriate for many organic molecules, but not for typical mineral systems.</p>
+<p>Consider, for example, a hydrated mineral containing <span class="arithmatex">\(\mathrm{Fe,\ Si,\ Al,\ O,\ H,\ Na}.\)</span></p>
+<p>ANI-2x recognizes O and H but does not provide models for Fe, Si, Al, or Na.</p>
+<p>Therefore, ANI-2x cannot simply be applied to the complete mineral–water–sodium system.</p>
+<p>This illustrates an important distinction:</p>
+<blockquote>
+<p>The capabilities of an ML architecture and the capabilities of a particular pretrained model are not the same thing.</p>
+</blockquote>
+<p>An architecture might theoretically represent many elements, but a pretrained model is only meaningful within the chemical space represented during its training.</p>
+<h2 id="mace-for-mineral-systems">MACE for mineral systems<a class="headerlink" href="#mace-for-mineral-systems" title="Anchor link to this section for reference">&para;</a></h2>
+<p>For materials simulations, architectures such as MACE offer a flexible way to represent many-body interactions.</p>
+<p>MACE stands for <strong>Multi-Atomic Cluster Expansion</strong> and combines ideas from atomic cluster expansions with equivariant message-passing neural networks
+[Advances in Neural Information Processing Systems 35 (NeurIPS 2022)].</p>
+<p>The word <em>equivariant</em> is important. Physical energies should be invariant under rotation,</p>
+<div class="arithmatex">\[
+E(\mathbf R)=E(\mathcal R\mathbf R),
+\]</div>
+<p>where <span class="arithmatex">\(\mathcal R\)</span> is a rotation. For periodic systems, the cell must be rotated consistently; any external fields must also be transformed.</p>
+<p>Forces, however, are vectors and must rotate with the system,</p>
+<div class="arithmatex">\[
+\mathbf F_i(\mathcal R\mathbf R)=\mathcal R\mathbf F_i(\mathbf R).
+\]</div>
+<p>Modern equivariant neural networks build these symmetry properties into the architecture rather than requiring the network to learn them purely from data.</p>
+<p>MACE constructs increasingly sophisticated representations of the environment surrounding each atom using information exchanged between neighboring atoms. 
+Very schematically, one can think of an atomic energy as containing contributions associated with increasingly complex many-body environments,</p>
+<div class="arithmatex">\[
+E_i\sim E_i^{(0)}+\sum_j E_{ij}^{(1)}+\sum_{jk}E_{ijk}^{(2)}+\cdots.
+\]</div>
+<p>The actual MACE formulation is considerably more sophisticated than this expression, but the important physical idea is that the network can represent many-body correlations.</p>
+<p>For minerals this is attractive because the energy of an oxygen atom, for example, does not depend merely on the distance to one silicon atom. Its environment 
+can depend on coordination geometry, neighboring Al or Fe substitutions, hydroxylation, water molecules, ions, and many other factors.</p>
+<h2 id="training-our-own-mineral-ml-potential">Training our own mineral ML potential<a class="headerlink" href="#training-our-own-mineral-ml-potential" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Suppose our target simulation contains</p>
+<div class="arithmatex">\[
+\boxed{\mathrm{Fe,\ Si,\ Al,\ O,\ H,\ Na}}.
+\]</div>
+<p>Rather than trying to force ANI-2x to describe this chemical space, we could train a model such as MACE specifically for it.</p>
+<p>The first task is not actually neural-network training.</p>
+<p>The first task is <strong>constructing the reference dataset</strong>.</p>
+<p>We need atomic configurations representative of the states that the eventual molecular-dynamics simulation will explore. For a mineral–water system, that might 
+include:</p>
+<ul>
+<li>bulk mineral structures;</li>
+<li>relaxed and distorted lattices;</li>
+<li>different Al/Si substitutions;</li>
+<li>Fe-containing environments;</li>
+<li>hydroxylated surfaces;</li>
+<li>mineral–water interfaces;</li>
+<li>different water coverages;</li>
+<li>solvated Na ions;</li>
+<li>Na approaching the mineral surface;</li>
+<li>surface-bound Na;</li>
+<li>defects;</li>
+<li>strained structures;</li>
+<li>thermally distorted configurations.</li>
+</ul>
+<p>For each configuration, we perform a consistent electronic-structure calculation, typically using DFT, obtaining</p>
+<div class="arithmatex">\[
+\mathbf R \longrightarrow \left\{E_{\mathrm{DFT}},\mathbf F_{\mathrm{DFT}},\boldsymbol{\sigma}_{\mathrm{DFT}}\right\},
+\]</div>
+<p>where <span class="arithmatex">\(\boldsymbol{\sigma}\)</span> represents stress information when required.</p>
+<p>For Fe-containing systems, the reference calculations must also treat relevant spin states and oxidation environments consistently. A coordinate-only model cannot
+distinguish multiple electronic states of an identical geometry without additional state information.</p>
+<p>The same electronic-structure methodology should normally be used throughout the dataset. Otherwise the ML potential is being asked to reproduce an inconsistent 
+potential-energy surface.</p>
+<h2 id="training-is-still-force-field-fitting">Training is still force-field fitting<a class="headerlink" href="#training-is-still-force-field-fitting" title="Anchor link to this section for reference">&para;</a></h2>
+<p>For classical force-field developers, it is useful to think of ML training as another parameterization procedure.</p>
+<p>Instead of optimizing parameters such as</p>
+<div class="arithmatex">\[
+q_i,\quad \sigma_{ij},\quad \epsilon_{ij},\quad k_b,
+\]</div>
+<p>we optimize thousands or millions of neural-network parameters,</p>
+<div class="arithmatex">\[
+\theta = \{\theta_1,\theta_2,\ldots,\theta_M\}.
+\]</div>
+<p>A typical loss function might combine errors in energy, forces, and stress:</p>
+<div class="arithmatex">\[
+\mathcal L = w_E\mathcal L_E +w_F\mathcal L_F +w_\sigma\mathcal L_\sigma.
+\]</div>
+<p>For example,</p>
+<div class="arithmatex">\[
+\mathcal L_E =\left(E_{\mathrm{ML}}-E_{\mathrm{DFT}}\right)^2,
+\]</div>
+<p>while a force loss could be</p>
+<div class="arithmatex">\[
+\mathcal L_F =\frac{1}{3N}\sum_{i=1}^{N}\left|\mathbf F_i^{\mathrm{ML}}-\mathbf F_i^{\mathrm{DFT}} \right|^2.
+\]</div>
+<p>For molecular dynamics, force accuracy is particularly important because even relatively small systematic errors in forces can affect structure and dynamics.</p>
+<p>But there is a very important warning here:</p>
+<div class="arithmatex">\[
+\boxed{\text{Low test-set RMSE does not necessarily mean a good force field.}}
+\]</div>
+<p>A potential could reproduce randomly selected configurations from the same dataset extremely well while failing catastrophically when MD encounters a new atomic environment.</p>
+<h2 id="the-extrapolation-problem">The extrapolation problem<a class="headerlink" href="#the-extrapolation-problem" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Suppose we train exclusively using equilibrium configurations of a mineral at 300 K.</p>
+<p>The resulting model may be extremely accurate close to those configurations.</p>
+<p>But during an MD simulation an atom might enter an unusual geometry because of thermal fluctuations, surface rearrangement, ion adsorption, or simply numerical noise.</p>
+<p>If the model has never seen anything remotely similar, its prediction is an extrapolation.</p>
+<p>Unlike many classical potentials, a neural network does not necessarily become strongly repulsive simply because two atoms approach each other too closely unless this behavior is represented by its architecture or training data.</p>
+<p>The network can therefore produce an unphysical low-energy configuration or enormous forces.</p>
+<p>A training set intended to support stable dynamics should consequently contain more than equilibrium structures. We want something closer to</p>
+<div class="arithmatex">\[
+\text{training space}=\text{equilibrium}+\text{thermal distortions}+\text{strained configurations}+\text{interfaces}+\text{unusual local environments}.
+\]</div>
+<p>This is where <strong>active learning</strong> becomes particularly useful.</p>
+<p>We can train an initial potential, perform MD, use an uncertainty indicator such as ensemble disagreement to select configurations, calculate those structures with DFT, add them to the training set, and retrain.</p>
+<p>The cycle becomes</p>
+<div class="arithmatex">\[
+\mathrm{DFT} \rightarrow \mathrm{training}\rightarrow \mathrm{MD} \rightarrow \mathrm{uncertain\ configurations}\rightarrow \mathrm{DFT}\rightarrow \cdots
+\]</div>
+<p>This is analogous to discovering during classical force-field development that a particular structural environment is poorly represented and adding new reference data to constrain it.</p>
+<h2 id="connecting-an-ml-potential-to-gromacs">Connecting an ML potential to GROMACS<a class="headerlink" href="#connecting-an-ml-potential-to-gromacs" title="Anchor link to this section for reference">&para;</a></h2>
+<p>The next question is how we actually use such a model during molecular dynamics.</p>
+<p>GROMACS 2026 provides the <strong>NNPot</strong> interface for neural-network potentials and requires a compatible LibTorch build. See the <a href="https://manual.gromacs.org/documentation/2026.0/reference-manual/special/nnpot.html">GROMACS NNPot documentation</a>.</p>
+<p>Conceptually, during each MD step GROMACS has the coordinates <span class="arithmatex">\(\mathbf R(t).\)</span></p>
+<p>These coordinates, together with information such as atomic numbers and the periodic cell, are passed to a PyTorch/TorchScript model:</p>
+<div class="arithmatex">\[
+\{\mathbf R,\mathbf Z,\mathbf H,\mathrm{PBC}\}\longrightarrow E_{\mathrm{ML}}.
+\]</div>
+<p>The force is then obtained from the energy gradient,</p>
+<div class="arithmatex">\[
+\mathbf F_i=-\frac{\partial E_{\mathrm{ML}}}{\partial\mathbf r_i}.
+\]</div>
+<p>GROMACS can then integrate Newton&rsquo;s equations,</p>
+<div class="arithmatex">\[
+m_i\frac{d^2\mathbf r_i}{dt^2}=\mathbf F_i,
+\]</div>
+<p>just as it would with a classical potential.</p>
+<p>The integrator itself does not need to know whether the forces came from a Lennard-Jones expression, PME electrostatics, or a neural network.</p>
+<h2 id="torchscript-as-the-interface">TorchScript as the interface<a class="headerlink" href="#torchscript-as-the-interface" title="Anchor link to this section for reference">&para;</a></h2>
+<p>A convenient feature of the GROMACS implementation is that the ML model can be provided as a <strong>TorchScript model</strong>.</p>
+<p>For ANI, for example, we can construct a wrapper that accepts GROMACS inputs:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">positions</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">atomic_numbers</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">pbc</span><span class="o">=</span><span class="kc">None</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">):</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="o">...</span>  <span class="c1"># Interface sketch; model evaluation is omitted.</span>
+</span></code></pre></div>
+<p>One important responsibility of this wrapper is <strong>unit conversion</strong>.</p>
+<p>GROMACS coordinates are normally expressed in nanometers, whereas many ML chemistry models operate in Ångström. Therefore,</p>
+<div class="arithmatex">\[
+1\ \mathrm{nm}=10\ \mathring{\text{A}}.
+\]</div>
+<p>For ANI, energies are naturally associated with Hartree, while GROMACS uses</p>
+<div class="arithmatex">\[
+\mathrm{kJ\,mol^{-1}}.
+\]</div>
+<p>Thus we use approximately</p>
+<div class="arithmatex">\[
+1\ E_h =2625.5\ \mathrm{kJ\,mol^{-1}}.
+\]</div>
+<p>The wrapper therefore performs transformations such as</p>
+<div class="arithmatex">\[
+\mathbf R_{\mathring{\text{A}}}=10\mathbf R_{\mathrm{nm}},
+\]</div>
+<p>converts the periodic cell by the same length factor, evaluates the network, and converts its energy back to GROMACS units. Keeping these operations in the differentiable computation ensures that energy gradients carry the correct force conversion. If forces are returned explicitly, their units must be converted 
+separately.</p>
+<p>Finally,</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">script</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"model.pt"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>exports a scriptable wrapper. Its input order and output format must match NNPot, and the PyTorch/LibTorch versions must be compatible.</p>
+<p>For a model trained in electronvolts, as is common in materials ML, the relevant energy conversion is instead approximately</p>
+<div class="arithmatex">\[
+1\ \mathrm{eV}
+=
+96.4853\ \mathrm{kJ\,mol^{-1}}.
+\]</div>
+<p>Unit consistency is absolutely critical because an unnoticed factor of ten in distance or a factor of 96 in energy will obviously produce meaningless dynamics.</p>
+<h2 id="neighbor-lists-and-gromacs-2026">Neighbor lists and GROMACS 2026<a class="headerlink" href="#neighbor-lists-and-gromacs-2026" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Local ML potentials require neighbors satisfying <span class="arithmatex">\(r_{ij}&lt;r_c.\)</span></p>
+<p>But GROMACS already has highly optimized machinery for constructing neighbor lists.</p>
+<p>This raises an obvious question:</p>
+<blockquote>
+<p>Why should an ML potential independently search the complete system for neighboring atoms?</p>
+</blockquote>
+<p>The GROMACS 2026 NNPot interface can provide atom-pair information and corresponding periodic shifts to the model; see the <a href="https://manual.gromacs.org/documentation/2026.0/user-guide/mdp-options.html">model-input options</a>. 
+This is particularly relevant for graph/message-passing architectures such as MACE.</p>
+<p>Conceptually,</p>
+<div class="arithmatex">\[
+\text{GROMACS neighbor search}
+\longrightarrow
+\text{pair list}
+\longrightarrow
+\text{ML model}.
+\]</div>
+<p>This is an important development because efficient neighbor construction is essential for scaling ML potentials to realistic condensed-phase systems.</p>
+<h2 id="machine-learning-potentials-in-lammps">Machine-learning potentials in LAMMPS<a class="headerlink" href="#machine-learning-potentials-in-lammps" title="Anchor link to this section for reference">&para;</a></h2>
+<p>LAMMPS provides another route for using learned interatomic potentials in mineral simulations. The scientific workflow is the same: prepare reference data, fit or
+fine-tune a model, validate it, and then use the model to calculate forces during MD. The software interface and model export format differ from those used by GROMACS.</p>
+<h3 id="model-families-and-interfaces">Model families and interfaces<a class="headerlink" href="#model-families-and-interfaces" title="Anchor link to this section for reference">&para;</a></h3>
+<p>LAMMPS exposes many ML potentials through <code>pair_style</code> commands. Despite the name, a pair style can implement a many-body potential; it does not imply that the 
+energy is a sum of independent pair interactions.</p>
+<table>
+<thead>
+<tr>
+<th>Model or interface</th>
+<th>LAMMPS pair style</th>
+<th>Main role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SNAP</td>
+<td><code>snap</code></td>
+<td>Uses bispectrum descriptors with fitted linear or quadratic energy models; requires the ML-SNAP package.</td>
+</tr>
+<tr>
+<td>Atomic cluster expansion (ACE)</td>
+<td><code>pace</code></td>
+<td>Evaluates supported ACE potentials; requires the ML-PACE package.</td>
+</tr>
+<tr>
+<td>High-dimensional neural-network potentials</td>
+<td><code>hdnnp</code></td>
+<td>Connects to n2p2 models; requires the ML-HDNNP package and its library dependency.</td>
+</tr>
+<tr>
+<td>General ML interface</td>
+<td><code>mliap</code></td>
+<td>Supports model/descriptor combinations or a unified Python model; requires ML-IAP and dependencies appropriate to the selected model.</td>
+</tr>
+</tbody>
+</table>
+<p>These are examples, not an exhaustive list. Each interface expects its own model files and build configuration. A <code>.pt</code> extension alone does not establish compatibility. See the official documentation for <a href="https://docs.lammps.org/pair_snap.html">SNAP</a>, <a href="https://docs.lammps.org/pair_pace.html">PACE</a>, <a href="https://docs.lammps.org/pair_hdnnp.html">HDNNP</a>, and <a href="https://docs.lammps.org/pair_mliap.html">ML-IAP</a>.</p>
+<h3 id="example-a-mace-model-through-ml-iap">Example: a MACE model through ML-IAP<a class="headerlink" href="#example-a-mace-model-through-ml-iap" title="Anchor link to this section for reference">&para;</a></h3>
+<p>MACE documents both an original LAMMPS interface and a newer ML-IAP route. For the latter, its guide describes exporting a trained model with <code>create_lammps_model.py</code> and the <code>--format=mliap</code> option. The documented GPU workflow requires compatible MACE, Python, CUDA, cuEquivariance, and LAMMPS/Kokkos installations. Follow the <a href="https://mace-docs.readthedocs.io/en/latest/guide/lammps_mliap.html">MACE installation and export guide</a> for the versions being used.</p>
+<p>For a model trained for Fe, Si, Al, O, H, and Na, an illustrative input fragment is:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># Requires a compatible MACE/ML-IAP installation and exported model.
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>units          metal
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>atom_style     atomic
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>boundary       p p p
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>newton         on
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a># The data file must define the box, coordinates, types, and masses.
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>read_data      mineral_water.data
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>pair_style     mliap unified mineral.model-mliap_lammps.pt 0
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>pair_coeff     * * Fe Si Al O H Na
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a># 0.0005 ps = 0.5 fs; validate this timestep for the actual system.
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>timestep       0.0005
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>thermo         100
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>thermo_style   custom step temp pe ke etotal press
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a># Evaluate the starting configuration before attempting dynamics.
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>run            0
+</span></code></pre></div>
+<p>This fragment assumes a fully periodic system and six atom types ordered as Fe, Si, Al, O, H, and Na. The <code>pair_coeff</code> element list maps <strong>LAMMPS type IDs</strong>, in
+numerical order, to chemical species. Change it to match the data file; an incorrect mapping can assign the wrong chemistry without changing the coordinates. The 
+final <code>0</code> on the <code>pair_style</code> line is the unified interface&rsquo;s ghost-neighbor flag, following the MACE example. It should not be changed without consulting the 
+interface requirements.</p>
+<p>This is a setup and single-point check, not a complete production script. It needs the actual model and structure files. Subsequent dynamics also require an 
+integration fix and appropriate initial velocities or a restart state. The <code>atomic</code> atom style suits this full-ML example; explicitly charged or bonded hybrid 
+models may require a different atom style.</p>
+<h3 id="units-and-validation">Units and validation<a class="headerlink" href="#units-and-validation" title="Anchor link to this section for reference">&para;</a></h3>
+<p>With <code>units metal</code>, LAMMPS uses ångströms for distance, electronvolts for energy, picoseconds for time, eV/Å for force, and bar for pressure. With <code>units real</code>, 
+energy is expressed in kcal/mol and time in femtoseconds. The chosen unit system must agree with the model interface; do not assume that switching <code>units</code> 
+automatically converts an arbitrary ML model. See the <a href="https://docs.lammps.org/units.html">LAMMPS unit definitions</a>.</p>
+<p>Before running long trajectories, compare the same configurations in LAMMPS and the model&rsquo;s original evaluation environment. Check total energies, forces, and, 
+when required, stresses or virials, accounting for sign, volume, and unit conventions. Then test timestep convergence, energy conservation in NVE, and the 
+structural properties relevant to the mineral–water system.</p>
+<p>LAMMPS integration does not extend the model&rsquo;s training domain. It also does not supply missing long-range physics automatically. Adding a Coulomb term to a model 
+fitted to total DFT energies can double-count interactions. A combined ML/classical model therefore needs a deliberate energy decomposition and consistent training 
+targets, followed by validation of the coupled system.</p>
+<h2 id="full-ml-versus-hybrid-simulations">Full ML versus hybrid simulations<a class="headerlink" href="#full-ml-versus-hybrid-simulations" title="Anchor link to this section for reference">&para;</a></h2>
+<p>There are two conceptually different ways we might use an ML potential.</p>
+<p>The first is to describe the complete system with ML:</p>
+<div class="arithmatex">\[
+E_{\mathrm{total}}=E_{\mathrm{ML}}.
+\]</div>
+<p>For example, if we had trained a model covering <span class="arithmatex">\(\mathrm{Fe,\ Si,\ Al,\ O,\ H,\ Na}\)</span>, we could potentially apply it to the entire mineral–water–ion system.</p>
+<p>For a wrapper accepting positions, atomic numbers, cell, and periodicity in that order, the relevant GROMACS options are:</p>
+<div class="language-ini highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="na">nnpot-active</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="na">nnpot-modelfile</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">mineral.pt</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="na">nnpot-input-group</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">System</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="na">nnpot-model-input1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">atom-positions</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="na">nnpot-model-input2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">atom-numbers</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="na">nnpot-model-input3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">box</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="na">nnpot-model-input4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pbc</span>
+</span></code></pre></div>
+<p>These options are only the NNPot portion of the input. The topology, model, and remaining MD settings must also be consistent.</p>
+<p>But replacing an established mineral force field completely is not necessarily the only interesting application.</p>
+<p>A second possibility is a <strong>hybrid ML/classical approach</strong>.</p>
+<p>For example, we might retain the classical description of a large mineral substrate while using ML for a chemically interesting region around a surface, defect, 
+adsorbed species, or reactive site.</p>
+<p>Conceptually,</p>
+<div class="arithmatex">\[
+E_{\mathrm{total}}=E_{\mathrm{ML}}+E_{\mathrm{MM}}+E_{\mathrm{ML-MM}}.
+\]</div>
+<p>GROMACS documents additive mechanical embedding, with classical coupling interactions and link atoms where needed. Such coupling must be validated for the chosen 
+boundary and chemistry; selecting a region does not by itself guarantee a physically accurate interface.</p>
+<p>This possibility is particularly interesting for developers of classical mineral force fields because ML does not necessarily have to replace decades of classical 
+force-field development. It may instead complement it.</p>
+<h2 id="the-particular-problem-of-electrostatics-in-minerals">The particular problem of electrostatics in minerals<a class="headerlink" href="#the-particular-problem-of-electrostatics-in-minerals" title="Anchor link to this section for reference">&para;</a></h2>
+<p>There is one issue that deserves special attention in mineral systems: <strong>long-range electrostatics</strong>.</p>
+<p>A local ML potential assumes approximately that <span class="arithmatex">\(E_i =E_i(\mathcal N_i;r_c).\)</span></p>
+<p>For a strictly local descriptor, atoms outside the cutoff do not explicitly enter that environment. Message passing can enlarge the effective range, but a finite 
+receptive field still does not provide a general long-range electrostatic treatment.</p>
+<p>Coulomb interactions, however, behave as</p>
+<div class="arithmatex">\[
+E_{\mathrm{Coulomb}}
+\propto
+\frac{q_iq_j}{r_{ij}},
+\]</div>
+<p>and therefore do not suddenly disappear at 5 or 6 Å.</p>
+<p>This is particularly relevant for systems containing:</p>
+<ul>
+<li>charged mineral surfaces;</li>
+<li>isomorphic substitutions;</li>
+<li>counterions;</li>
+<li>electrolyte solutions;</li>
+<li>electric double layers;</li>
+<li>protonated and deprotonated sites.</li>
+</ul>
+<p>A local model can implicitly reproduce electrostatic effects represented within its training configurations, but this does not automatically mean that it has learned 
+the correct long-range behavior under different conditions.</p>
+<p>For example, suppose we train only at one surface charge and one Na concentration. We should not automatically assume that the resulting local model will correctly predict behavior at a very different ionic strength.</p>
+<p>This is an area where classical force-field expertise becomes especially valuable. Classical models already have well-developed treatments for long-range electrostatics,
+including Ewald summation and PME.</p>
+<p>Some modern ML architectures therefore combine learned short-range interactions with explicit electrostatic or charge models.</p>
+<p>For mineral applications, deciding how to represent electrostatics may be just as important as choosing between MACE, ANI, NequIP, or another neural-network 
+architecture.</p>
+<h2 id="validation-think-like-a-force-field-developer">Validation: think like a force-field developer<a class="headerlink" href="#validation-think-like-a-force-field-developer" title="Anchor link to this section for reference">&para;</a></h2>
+<p>One of the most important messages is that ML potential validation should not stop with a machine-learning metric.</p>
+<p>Suppose someone reports</p>
+<div class="arithmatex">\[
+\mathrm{RMSE}_{F}=30\ \mathrm{meV/\mathring{\text{A}}}.
+\]</div>
+<p>That number is useful, but it does not answer whether the potential is appropriate for a mineral simulation.</p>
+<p>For the bulk mineral, we might examine lattice parameters,</p>
+<div class="arithmatex">\[
+a,\ b,\ c,\ \alpha,\beta,\gamma,
+\]</div>
+<p>as well as density, elastic properties, structural distributions, defect energies and vibrational properties.</p>
+<p>For the mineral–water interface, we can examine density profiles and radial distribution functions such as</p>
+<div class="arithmatex">\[
+g_{\mathrm{O_{surface}-O_{water}}}(r).
+\]</div>
+<p>We should test water orientation, adsorption energies, hydration structures and surface relaxation.</p>
+<p>For sodium we might examine</p>
+<div class="arithmatex">\[
+g_{\mathrm{Na-O_{water}}}(r),
+\]</div>
+<p>coordination numbers, hydration-shell structure, residence times, diffusion, and adsorption at surface sites.
+If chemical reactions are expected, such as proton transfer, we need explicit validation of those reactions.
+We should also perform stability tests.</p>
+<p>An NVE simulation is particularly informative. In the absence of numerical and model problems,</p>
+<div class="arithmatex">\[
+E_{\mathrm{total}}=E_{\mathrm{kinetic}}+E_{\mathrm{potential}}
+\]</div>
+<p>should be approximately conserved, and therefore</p>
+<div class="arithmatex">\[
+\frac{dE_{\mathrm{total}}}{dt}\approx 0.
+\]</div>
+<p>Significant systematic drift can indicate problems with the integration timestep, model precision, neighbor treatment, or the consistency of the predicted energy 
+and forces.</p>
+<h2 id="classical-force-fields-and-ml-potentials-are-complementary">Classical force fields and ML potentials are complementary<a class="headerlink" href="#classical-force-fields-and-ml-potentials-are-complementary" title="Anchor link to this section for reference">&para;</a></h2>
+<p>It is tempting to describe ML potentials as replacements for classical force fields, but I think that is the wrong way to view the problem, particularly for 
+mineral simulations.</p>
+<p>Classical mineral force fields embody substantial physical and chemical knowledge:</p>
+<ul>
+<li>how electrostatics should be represented;</li>
+<li>which structural observables matter;</li>
+<li>what transferability means;</li>
+<li>which mineral environments are difficult;</li>
+<li>how substitutions affect local structure;</li>
+<li>how water behaves at mineral surfaces;</li>
+<li>what experimental data provide meaningful validation.</li>
+</ul>
+<p>Machine learning does not make this expertise obsolete.</p>
+<p>Instead, it changes where some of the modeling decisions occur.</p>
+<p>In a traditional force field we spend considerable effort designing and parameterizing quantities such as</p>
+<div class="arithmatex">\[
+q_i,\quad \sigma_{ij},\quad \epsilon_{ij},\quad k_b,\quad r_0.
+\]</div>
+<p>With an ML potential, some of that effort moves toward designing</p>
+<div class="arithmatex">\[
+\boxed{
+\text{reference data}
++
+\text{model architecture}
++
+\text{training strategy}
++
+\text{validation domain}
+}.
+\]</div>
+<p>The training dataset effectively becomes part of the definition of the force field.</p>
+<h2 id="a-practical-workflow-for-mineral-systems">A practical workflow for mineral systems<a class="headerlink" href="#a-practical-workflow-for-mineral-systems" title="Anchor link to this section for reference">&para;</a></h2>
+<p>A realistic development workflow could begin with an existing classical mineral force field.</p>
+<p>We first use that force field, experimental structures and chemical intuition to identify the relevant configuration space:</p>
+<div class="arithmatex">\[
+\text{bulk}+\text{surface}+
+\text{water}+\text{ions}+\text{defects}.
+\]</div>
+<p>Representative structures are evaluated with DFT to obtain energies and forces,</p>
+<div class="arithmatex">\[
+\{\mathbf R_k\}\xrightarrow{\mathrm{DFT}}\{E_k,\mathbf F_k,\boldsymbol{\sigma}_k \}.
+\]</div>
+<p>We then divide these data into training, validation and genuinely independent test sets and train an ML potential such as MACE.
+The resulting model is first validated independently of the MD engine against electronic-structure calculations.
+If satisfactory, it is exported into a form compatible with GROMACS NNPot or the chosen LAMMPS interface and used for short MD simulations.
+Those simulations may reveal configurations that were poorly represented in the original dataset.
+We identify these configurations, calculate new DFT reference values, add them to the dataset and retrain.</p>
+<p>The development cycle therefore becomes</p>
+<div class="arithmatex">\[
+\boxed{\mathrm{DFT}\rightarrow \mathrm{ML\ training}\rightarrow \mathrm{validation}\rightarrow
+\mathrm{MD}\rightarrow \mathrm{new\ configurations}\rightarrow \mathrm{DFT}}.
+\]</div>
+<p>Eventually, when the potential is sufficiently robust, we can move toward longer production simulations.</p>
+<p>This is not fundamentally different from iterative classical force-field development. What has changed is the mathematical representation of the potential and 
+the amount of reference data we can incorporate.</p>
+<h2 id="final-perspective">Final perspective<a class="headerlink" href="#final-perspective" title="Anchor link to this section for reference">&para;</a></h2>
+<p>ANI provides an excellent demonstration of how a neural-network potential can communicate with GROMACS. It is relatively straightforward to wrap a TorchANI model, 
+convert units, export it through TorchScript, and allow GROMACS to obtain energies and forces.
+But ANI-2x is not a general mineral potential because its elemental coverage does not include elements such as Si, Al, Fe or Na.
+For mineral applications, models such as MACE are much more interesting because the architecture can be 
+trained specifically for the chemistry we need.</p>
+<p>If our system contains <span class="arithmatex">\(\mathrm{Fe,\ Si,\ Al,\ O,\ H,\ Na},\)</span></p>
+<p>But the fundamental scientific question has not changed.</p>
+<p>For classical force fields we ask:</p>
+<div class="arithmatex">\[
+\boxed{
+\text{Does my analytical potential reproduce the physics I care about?}
+}
+\]</div>
+<p>For machine-learning potentials we must ask exactly the same thing:</p>
+<div class="arithmatex">\[
+\boxed{
+\text{Does my learned potential reproduce the physics I care about?}
+}
+\]</div>
+<p>A small force RMSE is not the final answer. A sophisticated neural-network architecture is not the final answer. And simply being able to run the model inside GROMACS 
+or LAMMPS is not the final answer.</p>
+<p>For mineral simulations, successful model development combines classical force-field expertise, representative reference data, a suitable ML architecture, and rigorous 
+physical validation.</p>
+<h2 id="software-documentation">Software documentation<a class="headerlink" href="#software-documentation" title="Anchor link to this section for reference">&para;</a></h2>
+<ul>
+<li><a href="https://manual.gromacs.org/documentation/2026.0/reference-manual/special/nnpot.html">GROMACS 2026 NNPot</a></li>
+<li><a href="https://manual.gromacs.org/documentation/2026.0/user-guide/mdp-options.html">GROMACS 2026 molecular-dynamics parameters</a></li>
+<li><a href="https://docs.lammps.org/pair_mliap.html">LAMMPS ML-IAP</a></li>
+<li><a href="https://mace-docs.readthedocs.io/en/latest/guide/lammps_mliap.html">MACE in LAMMPS with ML-IAP</a></li>
+<li><a href="https://docs.lammps.org/pair_snap.html">LAMMPS SNAP</a>, <a href="https://docs.lammps.org/pair_pace.html">PACE</a>, and <a href="https://docs.lammps.org/pair_hdnnp.html">HDNNP</a></li>
+<li><a href="https://docs.lammps.org/units.html">LAMMPS units</a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../classical/" class="btn btn-neutral float-left" title="Basic concepts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../classical/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../assets/_markdown_exec_pyodide.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../search/main.js"></script>
+      <script src="../js/open_in_new_tab.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
