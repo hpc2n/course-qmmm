@@ -123,7 +123,8 @@ mineral systems, as we will discuss later.
 
 ## ANI as an introduction to ML potentials
 
-ANI provides a relatively intuitive example of an ML potential.
+ANI (Accurate NeurAl networK engINe for Molecular Energies) provides a relatively intuitive example of an ML potential
+[Chem. Sci. (2017) 8 (4): 3192–3203; J. Chem. Theory Comput. (2020) 16 (7): 4192–4202].
 
 ANI represents the environment around each atom using descriptors traditionally called atomic environment vectors. These descriptors encode radial and angular
 information about neighboring atoms. Conceptually, we can write
@@ -162,7 +163,8 @@ An architecture might theoretically represent many elements, but a pretrained mo
 
 For materials simulations, architectures such as MACE offer a flexible way to represent many-body interactions.
 
-MACE stands for **Multi-Atomic Cluster Expansion** and combines ideas from atomic cluster expansions with equivariant message-passing neural networks.
+MACE stands for **Multi-Atomic Cluster Expansion** and combines ideas from atomic cluster expansions with equivariant message-passing neural networks
+[Advances in Neural Information Processing Systems 35 (NeurIPS 2022)].
 
 The word *equivariant* is important. Physical energies should be invariant under rotation,
 
