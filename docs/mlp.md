@@ -45,25 +45,10 @@ This is the central idea behind machine-learning interatomic potentials.
 ## From analytical force fields to learned potential-energy surfaces
 
 Consider a system containing $N$ atoms. One can describe the configuration using the atomic coordinates
-
-$$
-\mathbf R =\{\mathbf r_1,\mathbf r_2,\ldots,\mathbf r_N\},
-$$
-
-the atomic numbers
-
-$$
-\mathbf Z =\{Z_1,Z_2,\ldots,Z_N\},
-$$
-
+$\mathbf R =\{\mathbf r_1,\mathbf r_2,\ldots,\mathbf r_N\},$ the atomic numbers $\mathbf Z =\{Z_1,Z_2,\ldots,Z_N\},$
 and, for a periodic system, the simulation-cell matrix $\mathbf H.$
 
-An ML potential attempts to construct a function
-
-$$
-E_\theta=E_\theta(\mathbf R,\mathbf Z,\mathbf H),
-$$
-
+An ML potential attempts to construct a function $E_\theta=E_\theta(\mathbf R,\mathbf Z,\mathbf H),$
 where $\theta$ represents the parameters of the neural network or another machine-learning model.
 
 We train these parameters using quantum-mechanical reference calculations. Ideally,
@@ -72,8 +57,8 @@ $$
 E_\theta(\mathbf R)\approx E_{\mathrm{DFT}}(\mathbf R).
 $$
 
-But energies alone are generally not sufficient for molecular dynamics. We also want the potential-energy surface to have the correct derivatives. 
-The force acting on atom $i$ is
+But energies alone are generally not sufficient for molecular dynamics. We also want the potential-energy 
+surface to have the correct derivatives. The force acting on atom $i$ is
 
 $$
 \mathbf F_i=-\frac{\partial E}{\partial\mathbf r_i}.
@@ -85,9 +70,9 @@ $$
 -\frac{\partial E_\theta}{\partial\mathbf r_i}\approx \mathbf F_i^{\mathrm{DFT}}.
 $$
 
-This is particularly important for molecular dynamics because the forces, rather than the absolute energies, determine the evolution of the atomic 
-coordinates.
-In this sense, an ML potential is still a force field. What changes is the representation of the potential-energy surface.
+This is particularly important for molecular dynamics because the forces, rather than the absolute energies, 
+determine the evolution of the atomic coordinates. In this sense, an ML potential is still a force field. 
+What changes is the representation of the potential-energy surface.
 
 ## Locality and atomic environments
 
@@ -638,9 +623,7 @@ g_{\mathrm{Na-O_{water}}}(r),
 $$
 
 coordination numbers, hydration-shell structure, residence times, diffusion, and adsorption at surface sites.
-
 If chemical reactions are expected, such as proton transfer, we need explicit validation of those reactions.
-
 We should also perform stability tests.
 
 An NVE simulation is particularly informative. In the absence of numerical and model problems,
@@ -717,13 +700,9 @@ $$
 $$
 
 We then divide these data into training, validation and genuinely independent test sets and train an ML potential such as MACE.
-
 The resulting model is first validated independently of the MD engine against electronic-structure calculations.
-
 If satisfactory, it is exported into a form compatible with GROMACS NNPot or the chosen LAMMPS interface and used for short MD simulations.
-
 Those simulations may reveal configurations that were poorly represented in the original dataset.
-
 We identify these configurations, calculate new DFT reference values, add them to the dataset and retrain.
 
 The development cycle therefore becomes
@@ -742,16 +721,11 @@ the amount of reference data we can incorporate.
 
 ANI provides an excellent demonstration of how a neural-network potential can communicate with GROMACS. It is relatively straightforward to wrap a TorchANI model, 
 convert units, export it through TorchScript, and allow GROMACS to obtain energies and forces.
-
 But ANI-2x is not a general mineral potential because its elemental coverage does not include elements such as Si, Al, Fe or Na.
+For mineral applications, models such as MACE are much more interesting because the architecture can be 
+trained specifically for the chemistry we need.
 
-For mineral applications, models such as MACE are suitable candidates because the architecture can be trained specifically for the chemistry we need.
-
-If our system contains $\mathrm{Fe,\ Si,\ Al,\ O,\ H,\ Na}$, then our model, and more importantly our **reference dataset**, must adequately represent those elements 
-in all relevant environments.
-
-GROMACS and LAMMPS provide the molecular-dynamics infrastructure around the model. NNPot and LAMMPS model interfaces connect that infrastructure to learned potentials. 
-Available GPU acceleration, parallel scaling, and stress support depend on the particular interface and software build.
+If our system contains $\mathrm{Fe,\ Si,\ Al,\ O,\ H,\ Na},$
 
 But the fundamental scientific question has not changed.
 
